@@ -1,7 +1,7 @@
 otp.config = {
     //If enabled it shows popup window with all planner responses in JSON
     //Can be also enabled in URL parameters as ?debug=true
-    debug: true,
+    debug: false,
     //If enabled it shows inspector layers overlays which can be used for Graph
     //debugging
     //Can be also enabled in URL parameters as ?debug_layers=true
