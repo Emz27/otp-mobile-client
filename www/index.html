@@ -1,320 +1,338 @@
 <!DOCTYPE html>
-<!--
-    Copyright (c) 2012-2016 Adobe Systems Incorporated. All rights reserved.
-
-    Licensed to the Apache Software Foundation (ASF) under one
-    or more contributor license agreements.  See the NOTICE file
-    distributed with this work for additional information
-    regarding copyright ownership.  The ASF licenses this file
-    to you under the Apache License, Version 2.0 (the
-    "License"); you may not use this file except in compliance
-    with the License.  You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on an
-    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-     KIND, either express or implied.  See the License for the
-    specific language governing permissions and limitations
-    under the License.
--->
 <html>
 
 <head>
-    <!-- <meta charset="utf-8" />
-    <meta name="format-detection" content="telephone=no" />
-    <meta name="msapplication-tap-highlight" content="no" /> -->
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <!-- // fixed the broken leaflet/map in web -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Good default declaration:
-    * gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
-    * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
-    * Disables use of eval() and inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
-        * Enable inline JS: add 'unsafe-inline' to default-src
-        * Enable eval(): add 'unsafe-eval' to default-src
-    * Create your own at http://cspisawesome.com
-    -->
-    <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: 'unsafe-inline' https://ssl.gstatic.com; style-src 'self' 'unsafe-inline'; media-src *" /> -->
-    <title>OpenTripPlanner</title>
+    <title>INSPINIA | Code mirror</title>
 
-
-    <link rel="stylesheet" href="js/lib/jquery-ui/css/smoothness/jquery-ui-1.9.1.custom.css" />
-    <link rel="stylesheet" href="js/lib/jquery-ui/addons/jquery-ui-timepicker.css" />
-    <link rel="stylesheet" href="//cdn.jsdelivr.net/leaflet/0.7.3/leaflet.css" />
-    <link rel="stylesheet" href="js/otp/widgets/widget-style.css?v=1" />
-    <link rel="stylesheet" href="js/otp/modules/planner/planner-style.css?v=1" />
-    <link rel="stylesheet" href="js/otp/modules/bikeshare/bikeshare-style.css?v=1" />
-    <link rel="stylesheet" href="js/otp/modules/multimodal/multimodal-style.css?v=1" />
-    <link rel="stylesheet" href="js/otp/modules/calltaker/calltaker-style.css?v=1" />
-    <link rel="stylesheet" href="js/otp/modules/analyst/analyst-style.css?v=1" />
-    <link rel="stylesheet" href="js/otp/modules/alerts/alerts-style.css?v=1" />
-    <link rel="stylesheet" href="js/otp/modules/alerts/alerts-style.css?v=1" />
-    <link rel="stylesheet" href="js/otp/modules/fieldtrip/fieldtrip-style.css?v=1" />
-    <link rel="stylesheet" href="js/otp/widgets/tripoptions/tripoptions-style.css?v=1" />
-    <link rel="stylesheet" href="js/otp/widgets/transit/widgets-transit-style.css?v=1" />
-    <link rel="stylesheet" href="style.css?v=1" />
-
-    <!--Loads jquery, underscore, json2, momentjs and raphael makes 7 requests less-->
-    <script src="//cdn.jsdelivr.net/g/jquery@1.9.1,underscorejs@1.4.2,json2@0.1,momentjs@1.7.2,raphael@2.1.2"></script>
-
-    <!--
-    leaflet cannot be loaded with other scripts. it breaks the L.Icon.Default.imagePath regular expression
-    Analyst's webinterface was broken by that
-    -->
-    <script src="//cdn.jsdelivr.net/leaflet/0.7.3/leaflet.js"></script>
-
-    <!-- jquery-ui -->
-    <script src="js/lib/jquery-ui/js/jquery-ui-1.9.1.custom.min.js"></script>
-    <script src="js/lib/jquery-ui/addons/jquery-ui-timepicker.js"></script>
-
-    <script src="./js/lib/jquery-ui/i18n/jquery.ui.datepicker-sl.js"></script>
-    <script src="./js/lib/jquery-ui/i18n/jquery.ui.datepicker-de.js"></script>
-    <script src="./js/lib/jquery-ui/i18n/jquery.ui.datepicker-fr.js"></script>
-    <script src="./js/lib/jquery-ui/i18n/jquery.ui.datepicker-it.js"></script>
-    <script src="./js/lib/jquery-ui/i18n/jquery.ui.datepicker-ca.js"></script>
-    <script src="./js/lib/jquery-ui/i18n/jquery.ui.datepicker-pl.js"></script>
-    <script src="./js/lib/jquery-ui/i18n/jquery.ui.datepicker-es.js"></script>
-    <script src="./js/lib/jquery-ui/i18n/jquery.ui.datepicker-pt.js"></script>
-
-    <!-- backbone -->
-    <script src="js/lib/backbone.js"></script>
-
-    <!-- Mustache/ICanHaz -->
-    <script src="//cdn.jsdelivr.net/mustache.js/0.7.2/mustache.js"></script>
-    <script src="js/lib/ICanHaz.js"></script>
-
-
-
-    <!-- otp-specific imports -->
-    <script src="js/otp/otp.js?v=1"></script>
-
-    <!-- otp-locales -->
-    <script language="javascript" src="js/lib/i18next-1.7.3.min.js"></script>
-    <script src="js/otp/locale/English.js?v=1"></script>
-    <script src="js/otp/locale/French.js?v=1"></script>
-    <script src="js/otp/locale/German.js?v=1"></script>
-    <script src="js/otp/locale/Slovenian.js?v=1"></script>
-    <script src="js/otp/locale/Italian.js?v=1"></script>
-    <script src="js/otp/locale/Catalan.js?v=1"></script>
-    <script src="js/otp/locale/Polish.js?v=1"></script>
-    <script src="js/otp/locale/Spanish.js?v=1"></script>
-    <script src="js/otp/locale/Portuguese.js?v=1"></script>
-
-    <script src="js/otp/config.js?v=1"></script>
-
-    <script src="js/otp/debug.js?v=1"></script>
-    <script src="js/otp/templates.js?v=1"></script>
-
-    <script src="js/otp/util/DataStorage.js?v=1"></script>
-    <script src="js/otp/util/Geo.js?v=1"></script>
-    <script src="js/otp/util/Itin.js?v=1"></script>
-    <script src="js/otp/util/Logger.js?v=1"></script>
-    <script src="js/otp/util/Text.js?v=1"></script>
-    <script src="js/otp/util/Time.js?v=1"></script>
-    <script src="js/otp/util/Imperial.js?v=1"></script>
-
-    <script src="js/otp/core/Webapp.js?v=1"></script>
-    <script src="js/otp/core/Map.js?v=1"></script>
-    <script src="js/otp/core/QueryLogger.js?v=1"></script>
-    <script src="js/otp/core/PopupMenu.js?v=1"></script>
-    <script src="js/otp/core/ContextMenu.js?v=1"></script>
-    <script src="js/otp/core/MapContextMenu.js?v=1"></script>
-    <script src="js/otp/core/WidgetManagerMenu.js?v=1"></script>
-    <script src="js/otp/core/Geocoder.js?v=1"></script>
-    <script src="js/otp/core/GeocoderBuiltin.js?v=1"></script>
-    <script src="js/otp/core/GeocoderBag.js?v=1"></script>
-    <script src="js/otp/core/SOLRGeocoder.js?v=1"></script>
-    <script src="js/otp/core/TransitIndex.js?v=1"></script>
-    <script src="js/otp/core/IndexApi.js?v=1"></script>
-    <script src="js/otp/core/TrinetSessionManager.js?v=1"></script>
-    <script src="js/otp/core/DefaultSessionManager.js?v=1"></script>
-
-    <script src="js/otp/widgets/Widget.js?v=1"></script>
-    <script src="js/otp/widgets/WidgetManager.js?v=1"></script>
-    <script src="js/otp/widgets/Dialogs.js?v=1"></script>
-
-    <script src="js/otp/modules/Module.js?v=1"></script>
-
-    <script src="js/otp/modules/planner/PlannerModule.js?v=1"></script>
-    <script src="js/otp/modules/planner/IconFactory.js?v=1"></script>
-    <script src="js/otp/modules/planner/TripPlan.js?v=1"></script>
-    <script src="js/otp/modules/planner/Itinerary.js?v=1"></script>
-    <script src="js/otp/modules/planner/ItinerariesWidget.js?v=1"></script>
-
-    <script src="js/otp/modules/multimodal/MultimodalPlannerModule.js?v=1"></script>
-
-    <!--Loads some javascript modules only if they are enabled in config.js-->
-    <script type="text/javascript">
-    	//Which modules needs which files
-    	var modules = {
-    		'otp.modules.bikeshare.BikeShareModule':
-    			[
-    			'js/otp/modules/bikeshare/BikeShareModule.js?v=1',
-    			'js/otp/modules/bikeshare/BikeStationsWidget.js?v=1'
-    		],
-    		'otp.modules.analyst.AnalystModule':
-    			[
-    			'js/otp/modules/analyst/AnalystModule.js?v=1',
-    			'js/otp/modules/analyst/AnalystLegendWidget.js?v=1',
-    		],
-    		'otp.modules.calltaker.CallTakerModule':
-    			[
-    			'js/lib/jspdf.min.js',
-    			'js/otp/modules/calltaker/CallTakerModule.js?v=1',
-    			'js/otp/modules/calltaker/CallHistoryWidget.js?v=1',
-    			'js/otp/modules/calltaker/MailablesWidget.js?v=1',
-    			'js/otp/modules/calltaker/calltaker-models.js?v=1',
-    			],
-    		'otp.modules.annotations.AnnotationsModule':
-    			[
-    			'js/otp/modules/annotations/AnnotationsModule.js?v=1'
-    		],
-    		'otp.modules.alerts.AlertsModule':
-    			[
-    			'js/otp/modules/alerts/AlertsModule.js?v=1',
-    			'js/otp/modules/alerts/AlertsWidget.js?v=1',
-    			'js/otp/modules/alerts/EntitiesWidget.js?v=1',
-    			'js/otp/modules/alerts/alerts-models.js?v=1',
-    		],
-    		'otp.modules.fieldtrip.FieldTripModule':
-    			[
-    			'js/otp/modules/fieldtrip/FieldTripModule.js?v=1',
-    			'js/otp/modules/fieldtrip/FieldTripManagerWidget.js?v=1',
-    			'js/otp/modules/fieldtrip/FieldTripRequestWidget.js?v=1',
-    			'js/otp/modules/fieldtrip/FieldTripGeocoderWidget.js?v=1',
-    			'js/otp/modules/fieldtrip/SaveFieldTripWidget.js?v=1',
-    			'js/otp/modules/fieldtrip/SearchWidget.js?v=1'
-    			]
-
-    	}
-    	for (var moduleIndex = 0; moduleIndex < otp.config.modules.length; moduleIndex++) {
-    		var curModuleClass = otp.config.modules[moduleIndex]["className"]
-    		//console.log(curModuleClass);
-    		if (curModuleClass in modules) {
-    			var modulesScripts = modules[curModuleClass];
-    			for (var scriptIndex = 0; scriptIndex < modulesScripts.length; scriptIndex++) {
-    				$.ajax({
-    					url: modulesScripts[scriptIndex],
-    					dataType: "script",
-    					cache: true,
-    					async: false
-    				})
-    				.fail(function(jqxhr, settings, exception) {
-    					console.error(settings);
-    					console.error(jqxhr.error());
-    					console.error(exception);
-    				});
-    			}
-    		}
-    	}
-
-    </script>
-
-
-
-    <script src="js/otp/widgets/InfoWidget.js?v=1"></script>
-    <script src="js/otp/widgets/tripoptions/RoutesSelectorWidget.js?v=1"></script>
-    <script src="js/otp/widgets/tripoptions/TripOptionsWidget.js?v=1"></script>
-    <script src="js/otp/widgets/tripoptions/BikeTrianglePanel.js?v=1"></script>
-
-    <script src="js/otp/widgets/transit/RouteBasedWidget.js?v=1"></script>
-    <script src="js/otp/widgets/transit/StopViewerWidget.js?v=1"></script>
-    <script src="js/otp/widgets/transit/StopFinderWidget.js?v=1"></script>
-    <script src="js/otp/widgets/transit/TripViewerWidget.js?v=1"></script>
-
-    <script src="js/otp/layers/StopsLayer.js?v=1"></script>
-
-    <!-- make legacy Internet Explorer play nice(r) -->
-    <!--[if lt IE 9]>
-      <script src="//cdn.jsdelivr.net/html5shiv/3.7.0/html5shiv.js"></script>
-      <script src="//cdn.jsdelivr.net/respond/0.1/respond.min.js"></script>
-    <![endif]-->
-
-
-    <!-- load ICH templates and create the webapp at startup -->
-    <script type="text/javascript" language="javascript">
-
-
-    $(document).ready(function() {
-    	//Sets datepicker language based on selected/detected language in config.js
-    	$.datepicker.setDefaults($.datepicker.regional[otp.config.locale.config.datepicker_locale_short]);
-        var templateUrls = [ //new Array(
-            'js/otp/layers/layers-templates.html',
-            'js/otp/widgets/widget-templates.html',
-            'js/otp/widgets/tripoptions/tripoptions-templates.html',
-            'js/otp/widgets/transit/widgets-transit-templates.html',
-        ];
-
-        var loadedTemplates = 0;
-
-        for(var i = 0; i < templateUrls.length; i++) {
-            $.get(templateUrls[i])
-            .success(function(html) {
-                $('<div style="display:none;"></div>').appendTo($("body")).html(html);
-                loadedTemplates++;
-                if(loadedTemplates == templateUrls.length) {
-                    ich.grabTemplates();
-                    new otp.core.Webapp();
-                }
-            });
-        }
-
-    });
-
-
-
-    </script>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="css/animate.css" rel="stylesheet">
+    <link href="css/plugins/codemirror/codemirror.css" rel="stylesheet">
+    <link href="css/plugins/codemirror/ambiance.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
 
 </head>
 
-<body>
-  <header id="branding" role="banner" class="clearfix">
+<body class="fixed-sidebar no-skin-config full-height-layout pace-done mini-navbar">
 
-    <!--<hgroup id="logo">
-      <div class="ribbon">
-        <h1 id="site-title"><span><a href="/" title="cibi.me" rel="home">cibi.me</a></span></h1>
-        <h2 id="site-description">Where can you bike to?</h2>
-      </div>
-    </hgroup>-->
+<div id="wrapper">
 
-    <!--<p id="splash-text"><span>Bike share is coming to NYC this summer!</span> <span>How will you use it to get around?</span></p>-->
+    <nav class="navbar-default navbar-static-side" role="navigation">
+        <!-- <div class="sidebar-collapse">
+            <ul class="nav metismenu" id="side-menu">
+                <li class="nav-header">
+                    <div class="dropdown profile-element"> <span>
+                            <img alt="image" class="img-circle" src="img/profile_small.jpg" />
+                             </span>
+                        <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                            <span class="clear"> <span class="block m-t-xs"> <strong class="font-bold">David Williams</strong>
+                             </span> <span class="text-muted text-xs block">Art Director <b class="caret"></b></span> </span> </a>
+                        <ul class="dropdown-menu animated fadeInRight m-t-xs">
+                            <li><a href="profile.html">Profile</a></li>
+                            <li><a href="contacts.html">Contacts</a></li>
+                            <li><a href="mailbox.html">Mailbox</a></li>
+                            <li class="divider"></li>
+                            <li><a href="login.html">Logout</a></li>
+                        </ul>
+                    </div>
+                    <div class="logo-element">
+                        IN+
+                    </div>
+                </li>
+              </ul>
 
-   <!--
-    <div class="search">
+        </div> -->
+    </nav>
 
-      <input type="text" name="location_search" placeholder="Search for a location&hellip;" />
-    </div>
-   -->
-  </header><!-- #branding -->
+        <div id="page-wrapper" class="gray-bg">
+        <div class="row border-bottom">
+        <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <div class="navbar-header">
+            <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
+            <!-- <form role="search" class="navbar-form-custom" action="search_results.html">
+                <div class="form-group">
+                    <input type="text" placeholder="Search for something..." class="form-control" name="top-search" id="top-search">
+                </div>
+            </form> -->
+        </div>
+            <ul class="nav navbar-top-links navbar-right">
+              <li>
+                <ul>
+                  <li>
+                    <input placeholder="Origin" id="originAutocomplete" class="form-control">
+                  </li>
+                  <li>
+                    <input placeholder="Destination" id="destinationAutocomplete" class="form-control">
+                  </li>
+                  <li>
+                      <button id ="searchButton"type="button" class="btn btn-w-m btn-default">Go</button>
+                  </li>
 
-  <div id="map"></div>
-  <div id="otp-minimize-tray"></div>
+                </ul>
 
-  <div id="otp-spinner"><img src="images/spinner.gif"></div>
+              </li>
+              <li>
+              <a class="right-sidebar-toggle">
+                  <i class="fa fa-tasks"></i>
+              </a>
+          </li>
+            </ul>
 
-  <script type="text/javascript">
+        </nav>
+        </div>
+            <div class="row wrapper border-bottom white-bg page-heading">
+                <div class="col-lg-10">
+                    <h2>Map view</h2>
+                    <ol class="breadcrumb">
+                        <li>
+                            <a>Test</a>
+                        </li>
 
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-8102379-22']);
-    _gaq.push(['_trackPageview']);
+                    </ol>
+                </div>
+                <div class="col-lg-2">
 
-    (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
+                </div>
+            </div>
+            <div class="fh-breadcrumb">
 
-  </script>
+                <div class="full-height" id="map">
 
-    <script type="text/javascript" src="cordova.js"></script>
-    <script type="text/javascript" src="js/index.js"></script>
-    <script type="text/javascript">
-        app.initialize();
+                </div>
+
+
+
+            </div>
+
+
+
+            <!-- <div id="right-sidebar" class="sidebar-open">
+                <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height: 100%;"><div class="sidebar-container" style="overflow: hidden; width: auto; height: 100%;">
+
+                    <ul class="nav nav-tabs navs-3">
+
+                        <li class=""><a data-toggle="tab" href="#tab-1" aria-expanded="false">
+                            Notes
+                        </a></li>
+                        <li><a data-toggle="tab" href="#tab-2">
+                            Projects
+                        </a></li>
+                        <li class="active"><a data-toggle="tab" href="#tab-3" aria-expanded="true">
+                            <i class="fa fa-gear"></i>
+                        </a></li>
+                    </ul>
+
+                    <div class="tab-content">
+
+
+
+
+                        <div id="tab-3" class="tab-pane active">
+
+                            <div class="sidebar-title">
+                                <h3><i class="fa fa-gears"></i> Settings</h3>
+                                <small><i class="fa fa-tim"></i> You have 14 projects. 10 not completed.</small>
+                            </div>
+
+                            <div class="setings-item">
+                        <span>
+                            Show notifications
+                        </span>
+                                <div class="switch">
+                                    <div class="onoffswitch">
+                                        <input type="checkbox" name="collapsemenu" class="onoffswitch-checkbox" id="example">
+                                        <label class="onoffswitch-label" for="example">
+                                            <span class="onoffswitch-inner"></span>
+                                            <span class="onoffswitch-switch"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="setings-item">
+                        <span>
+                            Disable Chat
+                        </span>
+                                <div class="switch">
+                                    <div class="onoffswitch">
+                                        <input type="checkbox" name="collapsemenu" checked="" class="onoffswitch-checkbox" id="example2">
+                                        <label class="onoffswitch-label" for="example2">
+                                            <span class="onoffswitch-inner"></span>
+                                            <span class="onoffswitch-switch"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="setings-item">
+                        <span>
+                            Enable history
+                        </span>
+                                <div class="switch">
+                                    <div class="onoffswitch">
+                                        <input type="checkbox" name="collapsemenu" class="onoffswitch-checkbox" id="example3">
+                                        <label class="onoffswitch-label" for="example3">
+                                            <span class="onoffswitch-inner"></span>
+                                            <span class="onoffswitch-switch"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="setings-item">
+                        <span>
+                            Show charts
+                        </span>
+                                <div class="switch">
+                                    <div class="onoffswitch">
+                                        <input type="checkbox" name="collapsemenu" class="onoffswitch-checkbox" id="example4">
+                                        <label class="onoffswitch-label" for="example4">
+                                            <span class="onoffswitch-inner"></span>
+                                            <span class="onoffswitch-switch"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="setings-item">
+                        <span>
+                            Offline users
+                        </span>
+                                <div class="switch">
+                                    <div class="onoffswitch">
+                                        <input type="checkbox" checked="" name="collapsemenu" class="onoffswitch-checkbox" id="example5">
+                                        <label class="onoffswitch-label" for="example5">
+                                            <span class="onoffswitch-inner"></span>
+                                            <span class="onoffswitch-switch"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="setings-item">
+                        <span>
+                            Global search
+                        </span>
+                                <div class="switch">
+                                    <div class="onoffswitch">
+                                        <input type="checkbox" checked="" name="collapsemenu" class="onoffswitch-checkbox" id="example6">
+                                        <label class="onoffswitch-label" for="example6">
+                                            <span class="onoffswitch-inner"></span>
+                                            <span class="onoffswitch-switch"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="setings-item">
+                        <span>
+                            Update everyday
+                        </span>
+                                <div class="switch">
+                                    <div class="onoffswitch">
+                                        <input type="checkbox" name="collapsemenu" class="onoffswitch-checkbox" id="example7">
+                                        <label class="onoffswitch-label" for="example7">
+                                            <span class="onoffswitch-inner"></span>
+                                            <span class="onoffswitch-switch"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="sidebar-content">
+                                <h4>Settings</h4>
+                                <div class="small">
+                                    I belive that. Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                                    And typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.
+                                    Over the years, sometimes by accident, sometimes on purpose (injected humour and the like).
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div><div class="slimScrollBar" style="background: rgb(0, 0, 0); width: 7px; position: absolute; top: 0px; opacity: 0.4; display: none; border-radius: 7px; z-index: 99; right: 1px; height: 383.485px;"></div><div class="slimScrollRail" style="width: 7px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 7px; background: rgb(51, 51, 51); opacity: 0.4; z-index: 90; right: 1px;"></div></div>
+
+
+
+            </div> -->
+
+        <div class="footer">
+
+            <div>
+                <strong>Copyright</strong> BGL &copy; 2017
+            </div>
+        </div>
+
+        </div>
+        </div>
+
+
+
+    <!-- Mainly scripts -->
+    <script src="js/jquery-3.1.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/plugins/metisMenu/jquery.metisMenu.js"></script>
+    <script src="js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
+    <!-- Custom and plugin javascript -->
+    <script src="js/inspinia.js"></script>
+    <script src="js/plugins/pace/pace.min.js"></script>
+
+    <script src="js/reqwest.min.js"></script>
+    <script src="js/q.min.js"></script>
+    <script src="js/Ractive.min.js"></script>
+    <script src="js/picoModal-1.0.0.min.js"></script>
+    <script src="js/native.history.js"></script>
+    <!-- <script src="http://maps.google.com/maps/api/js?libraries=places&sensor=false&key=AIzaSyBLP-naDBEFyAjrnvuzq-EWKAOC_MhN3Bc"></script> -->
+    <!-- <script src="leaflet/leaflet.js"></script> -->
+    <!-- <script src="leaflet/google.js"></script> -->
+    <script src="js/util.js"></script>
+    <script src="js/ws.js"></script>
+    <script src="js/map.js"></script>
+
+
+
+    <script>
+
+
+      var originAutocomplete, destinationAutocomplete;
+
+      function initMap() {
+
+        var map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: -34.397, lng: 150.644},
+          zoom: 8
+        });
+
+        originAutocomplete =  new google.maps.places.SearchBox(document.getElementById("originAutocomplete"));
+
+        destinationAutocomplete = new google.maps.places.SearchBox(document.getElementById("destinationAutocomplete"));
+
+      }
+
+
+
+
+      $(document).ready(function(){
+
+
+        $("searchButton").on("click",function(){
+
+
+
+
+        });
+
+
+
+      });
+
     </script>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBjsZnY2K1XZ5F4DjigseCx8SBTLe326O4&libraries=places&callback=initMap"
+             async defer></script>
+
+
+
 </body>
 
 </html>
