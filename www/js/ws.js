@@ -63,7 +63,7 @@
 // }();
 
 var otp = function() {
-  var API = 'http://sakay.ph/api'
+  var API = 'https://sakay.ph/api'
 
   function callApi(endpoint, data) {
     return Q(reqwest({
