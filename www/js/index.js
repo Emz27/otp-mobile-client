@@ -5,7 +5,7 @@
   var itenerary = [];
   var snappedCoordinates = [];
   var collectionArray = [];
-  var sideBar = new appView();
+  //var sideBar = new appView();
 
 
 
