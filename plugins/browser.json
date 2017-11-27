@@ -13,9 +13,6 @@
         "cordova-plugin-camera": {
             "PACKAGE_NAME": "com.phonegap.first"
         },
-        "cordova-plugin-media-capture": {
-            "PACKAGE_NAME": "com.phonegap.first"
-        },
         "cordova-plugin-device": {
             "PACKAGE_NAME": "com.phonegap.first"
         },
@@ -29,6 +26,9 @@
             "PACKAGE_NAME": "com.phonegap.first"
         },
         "cordova-plugin-inappbrowser": {
+            "PACKAGE_NAME": "com.phonegap.first"
+        },
+        "cordova-plugin-media-capture": {
             "PACKAGE_NAME": "com.phonegap.first"
         },
         "cordova-plugin-network-information": {
