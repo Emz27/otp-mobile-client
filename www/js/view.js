@@ -49,7 +49,6 @@ var IteneraryView = Backbone.View.extend({
   },
   addLeg: function(leg){
 
-    var view = new LegView({model : })
 
   }
 });

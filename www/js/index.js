@@ -86,9 +86,9 @@
 
 
           results.forEach(function(item,i){
-            var collection = new IteneraryList();
-
-            collectionArray.push();
+            // var collection = new IteneraryList();
+            //
+            // collectionArray.push();
 
             item.legs.forEach(function(legs,j){
               var lines = new google.maps.Polyline({
@@ -103,7 +103,7 @@
               item.polyline = lines;
               itenerary.push(item);
 
-              collection.create();
+              // collection.create();
             });
 
           });
