@@ -40,12 +40,7 @@
 
 
 
-    $(window).resize(function () {
-    var h = $(window).height(),
-        offsetTop = 63; // Calculate the top offset
 
-    $('#map').css('height', (h - offsetTop));
-    }).resize();
 
     $("#searchButton").on("click",function(){
 
