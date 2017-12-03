@@ -1,8 +1,8 @@
 var LegView = Backbone.View.extend({
 
   tagName: "li",
-  legVehicleTemplate: _.template($('#leg-vehicle').html()),
-  legWalkTemplate: _.template($('#leg-walk').html()),
+  legVehicleTemplate: _.template($('#leg_vehicle').html()),
+  legWalkTemplate: _.template($('#leg_walk').html()),
 
   events: {
     'mouseenter': 'highlightPolyline',
@@ -44,7 +44,7 @@ var LegView = Backbone.View.extend({
 
 var LegHeaderView = Backbone.View.extend({
 
-  legHeaderTemplate : _.template($('#leg-header').html()),
+  legHeaderTemplate : _.template($('#itenerary_header').html()),
 
   render : function(){
 
@@ -64,7 +64,7 @@ var IteneraryTabView = Backbone.View.extend({
 
   tagName : "li",
 
-  template : _.template($('#itenerary-tab').html()),
+  template : _.template($('#itenerary_tab').html()),
 
   events: {
     'click': 'highlightPolyline'
