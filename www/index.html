@@ -6,144 +6,134 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title>Wayto</title>
 
+    <title>Wayto</title>
+    <link rel="logo icon" href="icons/Logo 1.svg" />
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
-
-    <style>
-
-    </style>
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="styles/index.css">
 </head>
 
 <body>
+  <div id="content" class="container-fluid d-flex flex-column p-0">
 
-
-  <div class="row border-bottom">
-    <nav class="navbar navbar-static-top  " role="navigation" style="margin-bottom: 0">
-
-        <ul class="nav navbar-top-links navbar-right row">
-            <li>
-              <input placeholder="Origin" id="originAutocomplete" class="form-control">
-            </li>
-            <li>
-              <input placeholder="Destination" id="destinationAutocomplete" class="form-control">
-            </li>
-            <li>
-                <button id ="searchButton" type="button" class="btn btn-w-m btn-default">Go</button>
-            </li>
-            <li>
-                <a class="right-sidebar-toggle">
-                    <i class="fa fa-tasks"></i>
-                </a>
-            </li>
-        </ul>
-
+    <nav class="navbar navbar-light bg-light justify-content-between">
+      <a class="navbar-brand" href="#">
+        <img src="icons/Logo 1.svg" width="30" height="30" class="d-inline-block align-top" alt="">
+        WayTo
+      </a>
+      <form class="form-inline">
+        <input placeholder="Origin" id="originAutocomplete" class="form-control mr-sm-2" aria-label="Origin">
+        <input placeholder="Destination" id="destinationAutocomplete" class="form-control mr-sm-2" aria-label="Search" aria-label="Destination">
+        <button id="searchButton" class="btn btn-outline-success my-2 my-sm-0">Go</button>
+      </form>
     </nav>
-    </div>
+    <div id="itenerary_list" class="">
+      <div class="col-12 p-0">
+        <ul class="nav nav-tabs nav-fill" id="myTab" role="tablist">
 
-
-    <div id="map" class="col-xm-12">map
-    </div>
-
-    <div id="right-sidebar" class="animated">
-      <div class="sidebar-container">
-        <ul id="tab" class="nav nav-tabs navs-3">
+          <!-- ......... -->
 
         </ul>
-        <div id="tab-content" class="tab-content">
+      </div>
+      <div id="itenerary_mobile" class="col-sm-12">
 
-        </div>
       </div>
     </div>
+    <div id="map" class="col">
+
+    </div>
+
+    <div class="tab-content" id="myTabContent">
+
+        <!-- ......... -->
+
+    </div>
+  </div>
+
 
                   <!-- Templates -->
 
-<script id="leg-walk" type="text/template">
-  <div class="widget navy-bg p-lg text-center">
-    <div class="m-b-md">
-        <i class="fa fa-shield fa-4x"></i>
-        <h3 class="font-bold no-margins">
-          <%= conveyance.primary %>
-        </h3>
-        <h5 class="m-xs"><%= from.name %> --> <%= to.name %></h5>
-        <small><%= formatDuration(duration) %></small>
+<script id="leg_walk" type="text/template">
+  <li class="list-group-item d-flex">
+    <div class="col-2 text-center p-0">
+      <img src="icons/<% conveyance.primary %> White.svg" width="25px" height="25px" class="d-inline-block" alt="">
+      <div class="col-12 p-0"><small><% formatDuration(duration) %></small></div>
+    </div>
+    <div class="col p-0">
+      <span class="badge badge-light border border-dark"><% conveyance.primary %></span>
+      <ul class="list-unstyled">
+        <%=
+          steps.forEach(function(item,i){
+            <%
+              <li><% i+1 %>. <% item.absoluteDirection %> on to <% item.streetName %></li>
+            %>
+          });
+        %>
+      </ul>
+
+    </div>
+  </li>
+</script>
+<script id="leg_vehicle" type="text/template">
+  <li class="list-group-item d-flex">
+    <div class="col-2 text-center p-0">
+      <img src="icons/<% conveyance.primary %> White.svg" width="25px" height="25px" class="d-inline-block" alt="">
+      <div class="col-12 p-0"><small><% formatDuration(duration) %></small></div>
+      <div class="col-12 p-0"><small><% fare %></small></div>
+    </div>
+    <div class="col p-0">
+      <span class="badge badge-light border border-dark"><% conveyance.primary %></span>
+      <ul class="list-unstyled">
+        <li><b>Board</b></li>
+        <li><% from.name %></li>
+        <li><b>Alight</b></li>
+        <li><% to.name %></li>
+      </ul>
+    </div>
+  </li>
+</script>
+
+<script id="itenerary_header" type="text/template">
+  <div class="itenerary_header card-header">
+
+    <div class="col-12">
+      <div class="d-flex justify-content-between">
+        <b class=""><% formatDuration(duration) %></b>
+        <b class="">time (day) - time</b>
+        <b class="">P<% fare %></b>
+      </div>
+      <hr class="my-1">
+    </div>
+    <%=
+      steps.forEach(function(item,i){
+        <%
+          <li><% i+1 %>. <% item.absoluteDirection %> on to <% item.streetName %></li>
+          <div class="col-12">
+            <img src="icons/<% item.conveyance.primary %> Black.svg" width="25px" height="25px" class="d-inline-block" alt="">
+            <span class="badge badge-dark ml-2"><% item.conveyance.primary %></span>
+            <span class="ml-3"><% item.route %></span>
+          </div>
+        %>
+      });
+    %>
+
+
+    <div class="col-12 my-2">
+        <b >WALKING</b> <% formatDuration(walkTime) %>
     </div>
   </div>
 </script>
-<script id="leg-vehicle" type="text/template">
-  <div class="widget navy-bg p-lg text-center">
-    <div class="m-b-md">
-        <i class="fa fa-shield fa-4x"></i>
-        <h3 class="font-bold no-margins">
-          <%= conveyance.primary %>
-        </h3>
-        <h5 class="m-xs"><%= from.name %> --> <%= to.name %></h5>
-        <small><%= formatDuration(duration) %></small>
-        <small>
-          <%
-          if(fare =="" || fare =="0" || fare == 0 ){
-          %>
-          No Fare
-          <%
-          }
-          else {
-          %>
 
-          <%= fare %>
-
-          <%
-          }
-          %>
-
-        </small>
-    </div>
-  </div>
-</script>
-<script id="leg-header" type="text/template">
-  <ul class="list-group">
-      <li class="list-group-item">
-          <span class="badge badge-info"><%= formatDuration(duration) %></span>
-          Total Duration
-      </li>
-      <li class="list-group-item ">
-          <span class="badge badge-info"><%= fare %></span>
-          Total Fare
-      </li>
-      <li class="list-group-item ">
-          <span class="badge badge-info"><%= moment(startTime).utc(8).format("HH:mm") %></span>
-          Time of Departure
-      </li>
-      <li class="list-group-item ">
-          <span class="badge badge-info"><%= moment(endTime).utc(8).format("HH:mm") %></span>
-          Time of Arrival
-      </li>
-      <li class="list-group-item ">
-          <span class="badge badge-info"><%= date %></span>
-          Date
-      </li>
-  </ul>
-</script>
-<script id="itenerary-tab" type="text/template">
-
-    <a data-toggle="tab" href="#tab-<%= tabId %>">
+<script id="itenerary_tab" type="text/template">
+    <span class="nav-link active" data-toggle="tab" href="#tab-<%= tabId %>" role="tab" aria-selected="true"  aria-controls="tabControl-1">
       <%= formatDuration(duration) %>
-    </a>
-
+    </span>
 </script>
 
 <script id="tab-number" type="text/template">
-  <div id="tab-<%= tabId %>" class="tab-pane <%= status %>">
-      <div class="sidebar-title">
-
-
-
-      </div>
-      <ul id="sidebar-content" class="sidebar-list">
-
-
-
-      </ul>
+  <div class="card tab-pane fade <%= if(status=='active'){ %><% 'show '+ status %><%= } %>" id="tab-<%= tabId %>" role="tabpanel" aria-labelledby="tabId-<%= tabId %>">
 
   </div>
 </script>
