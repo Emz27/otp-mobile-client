@@ -24,7 +24,10 @@
   function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
       center: {lat: 14.591667, lng: 121.094006},
-      zoom: 12
+      zoom: 12,
+      mapTypeId: google.maps.MapTypeId.ROADMAP,
+      streetViewControl: false,
+      disableDefaultUI: true
     });
     originAutocomplete =  new google.maps.places.SearchBox(document.getElementById("originAutocomplete"));
     destinationAutocomplete = new google.maps.places.SearchBox(document.getElementById("destinationAutocomplete"));
@@ -40,12 +43,7 @@
 
 
 
-    $(window).resize(function () {
-    var h = $(window).height(),
-        offsetTop = 63; // Calculate the top offset
 
-    $('#map').css('height', (h - offsetTop));
-    }).resize();
 
     $("#searchButton").on("click",function(){
 

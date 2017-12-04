@@ -1,178 +1,167 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
 
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title>INSPINIA | Code mirror</title>
 
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="font-awesome/css/font-awesome.css" rel="stylesheet">
-    <link href="css/animate.css" rel="stylesheet">
-    <link href="css/plugins/codemirror/codemirror.css" rel="stylesheet">
-    <link href="css/plugins/codemirror/ambiance.css" rel="stylesheet">
-    <link href="css/style.css" rel="stylesheet">
-
-    <style>
-
-    </style>
+    <title>Wayto</title>
+    <link rel="logo icon" href="icons/Logo 1.svg" />
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="css/index.css">
 </head>
 
 <body>
+  <div id="content" class="container-fluid d-flex flex-column p-0">
 
-
-  <div class="row border-bottom">
-    <nav class="navbar navbar-static-top  " role="navigation" style="margin-bottom: 0">
-
-        <ul class="nav navbar-top-links navbar-right row">
-            <li>
-              <input placeholder="Origin" id="originAutocomplete" class="form-control">
-            </li>
-            <li>
-              <input placeholder="Destination" id="destinationAutocomplete" class="form-control">
-            </li>
-            <li>
-                <button id ="searchButton" type="button" class="btn btn-w-m btn-default">Go</button>
-            </li>
-            <li>
-                <a class="right-sidebar-toggle">
-                    <i class="fa fa-tasks"></i>
-                </a>
-            </li>
-        </ul>
+    <nav class="navbar navbar-light bg-light justify-content-between">
+      <a class="navbar-brand" href="#">
+        <img src="icons/Logo 1.svg" width="30" height="30" class="d-inline-block align-top" alt="">
+        WayTo
+      </a>
+      <div class="form-inline">
+        <input placeholder="Origin" id="originAutocomplete" class="form-control mr-sm-2" aria-label="Origin">
+        <input placeholder="Destination" id="destinationAutocomplete" class="form-control mr-sm-2" aria-label="Search" aria-label="Destination">
+        <button id="searchButton" class="btn btn-outline-success my-2 my-sm-0">Go</button>
+      </div>
 
     </nav>
-    </div>
+    <div id="itenerary_list" class="">
+      <div class="col-12 p-0">
+        <ul class="nav nav-tabs nav-fill" id="duration_tab" role="tablist">
 
-
-    <div id="map" class="col-xm-12">map
-    </div>
-
-    <div id="right-sidebar" class="animated">
-      <div class="sidebar-container">
-        <ul id="tab" class="nav nav-tabs navs-3">
+          <!-- ......... -->
 
         </ul>
-        <div id="tab-content" class="tab-content">
+      </div>
+      <div id="itenerary_mobile" class="col-sm-12">
 
-        </div>
       </div>
     </div>
+    <div id="map" class="col">
+
+    </div>
+
+    <div class="tab-content">
+
+        <!-- ......... -->
+
+    </div>
+  </div>
+
 
                   <!-- Templates -->
 
 <script id="leg_walk" type="text/template">
-  <div class="widget navy-bg p-lg text-center">
-    <div class="m-b-md">
-        <i class="fa fa-shield fa-4x"></i>
-        <h3 class="font-bold no-margins">
-          <%= conveyance.primary %>
-        </h3>
-        <h5 class="m-xs"><%= from.name %> --> <%= to.name %></h5>
-        <small><%= formatDuration(duration) %></small>
+  <li class="list-group-item d-flex">
+    <div class="col-2 text-center p-0">
+      <img src="icons/<%= conveyance.primary %> White.svg" width="25px" height="25px" class="d-inline-block" alt="">
+      <div class="col-12 p-0"><small><%= formatDuration(duration) %></small></div>
     </div>
-  </div>
+    <div class="col p-0">
+      <span class="badge badge-light border border-dark"><%= conveyance.primary %></span>
+      <ul class="list-unstyled">
+        <%
+          steps.forEach(function(item,i){
+            %>
+              <li><%= i+1 %>. <%= item.absoluteDirection %> on to <%= item.streetName %></li>
+            <%
+          });
+        %>
+      </ul>
+
+    </div>
+  </li>
 </script>
 <script id="leg_vehicle" type="text/template">
-  <div class="widget navy-bg p-lg text-center">
-    <div class="m-b-md">
-        <i class="fa fa-shield fa-4x"></i>
-        <h3 class="font-bold no-margins">
-          <%= conveyance.primary %>
-        </h3>
-        <h5 class="m-xs"><%= from.name %> --> <%= to.name %></h5>
-        <small><%= formatDuration(duration) %></small>
-        <small>
-          <%
-          if(fare =="" || fare =="0" || fare == 0 ){
-          %>
-          No Fare
-          <%
-          }
-          else {
-          %>
 
-          <%= fare %>
-
-          <%
-          }
-          %>
-
-        </small>
+    <%
+    var veh = conveyance.primary;
+    if(veh == "RAIL") veh = route;
+    %>
+    <div class="col-2 text-center p-0">
+      <img src="icons/<%= veh %> White.svg" width="25px" height="25px" class="d-inline-block" alt="">
+      <div class="col-12 p-0"><small><%= formatDuration(duration) %></small></div>
+      <div class="col-12 p-0"><small><%= fare %></small></div>
     </div>
-  </div>
+    <div class="col p-0">
+      <span class="badge badge-light border border-dark"><%= conveyance.primary %></span>
+      <ul class="list-unstyled">
+        <li><b>Board</b></li>
+        <li><%= from.name %></li>
+        <li><b>Alight</b></li>
+        <li><%= to.name %></li>
+      </ul>
+    </div>
+
 </script>
+
 <script id="itenerary_header" type="text/template">
-  <ul class="list-group">
-      <li class="list-group-item">
-          <span class="badge badge-info"><%= formatDuration(duration) %></span>
-          Total Duration
-      </li>
-      <li class="list-group-item ">
-          <span class="badge badge-info"><%= fare %></span>
-          Total Fare
-      </li>
-      <li class="list-group-item ">
-          <span class="badge badge-info"><%= moment(startTime).utc(8).format("HH:mm") %></span>
-          Time of Departure
-      </li>
-      <li class="list-group-item ">
-          <span class="badge badge-info"><%= moment(endTime).utc(8).format("HH:mm") %></span>
-          Time of Arrival
-      </li>
-      <li class="list-group-item ">
-          <span class="badge badge-info"><%= date %></span>
-          Date
-      </li>
-  </ul>
+    <div class="col-12">
+      <div class="d-flex justify-content-between">
+        <b class=""><%= formatDuration(duration) %></b>
+        <b class="">time (day) - time</b>
+        <b class="">P<%= fare %></b>
+      </div>
+    <hr class="my-1"/>
+    </div>
+    <%
+      legs.forEach(function(item,i){
+        var veh = item.conveyance.primary;
+        if(veh == "WALK") return;
+        if(veh == "RAIL") veh = item.route;
+        %>
+          <div class="col-12">
+            <img src="icons/<%= veh %> Black.svg" width="25px" height="25px" class="d-inline-block" alt="">
+            <span class="badge badge-dark ml-2"><%= item.conveyance.primary %></span>
+            <span class="ml-3"><%= item.route %></span>
+          </div>
+        <%
+
+      });
+    %>
+    <div class="col-12 my-2">
+        <b >WALKING</b> <%= formatDuration(walkTime) %>
+    </div>
 </script>
+
 <script id="itenerary_tab" type="text/template">
-
-    <a data-toggle="tab" href="#tab-<%= tabId %>">
+    <span class="nav-link <% status %>" data-toggle="tab" href="#tab-<%= tabId %>" role="tab" aria-selected="true"  aria-controls="tabControl-<%= tabId %>">
       <%= formatDuration(duration) %>
-    </a>
-
+    </span>
 </script>
 
 <script id="tab-number" type="text/template">
-  <div id="tab-<%= tabId %>" class="tab-pane <%= status %>">
-      <div class="sidebar-title">
-
-
-
-      </div>
-      <ul id="sidebar-content" class="sidebar-list">
-
-
-
-      </ul>
-
+  <div class="card tab-pane fade <% if(status=='active'){ %><%= 'show '+ status %><% } %>" id="tab-<%= tabId %>" role="tabpanel" aria-labelledby="tabId-<%= tabId %>">
+    <div class="card-header">
+      <!-- ............ -->
+    </div>
+    <ul class="list-group list-group-flush">
+      <!-- ............ -->
+    </div>
   </div>
 </script>
 
     <!-- Mainly scripts -->
-    <script src="js/jquery-3.1.1.min.js"></script>
+    <script src="js/jquery-3.2.1.slim.min.js"></script>
+    <script src="js/popper.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
-    <script src="js/plugins/metisMenu/jquery.metisMenu.js"></script>
-    <script src="js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
 
     <!-- Custom and plugin javascript -->
-    <script src="js/inspinia.js"></script>
-    <script src="js/plugins/pace/pace.min.js"></script>
 
-    <script src="https://momentjs.com/downloads/moment.min.js"></script>
-    <script src="https://momentjs.com/downloads/moment-timezone-with-data.min.js"></script>
+    <script src="js/moment.min.js"></script>
+    <script src="js/moment-timezone-with-data.min.js"></script>
 
     <script src="js/reqwest.min.js"></script>
     <script src="js/q.min.js"></script>
-    <script src="js/Ractive.min.js"></script>
-    <script src="js/picoModal-1.0.0.min.js"></script>
-    <script src="js/native.history.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.3.0/mustache.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.3.3/backbone-min.js"></script>
+
+    <script src="js/underscore-min.js"></script>
+    <script src="js/backbone-min.js"></script>
 
 
     <!-- Backbone MV* -->

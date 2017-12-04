@@ -1,12 +1,16 @@
+
 var LegView = Backbone.View.extend({
 
-  tagName: "li",
+  tagName:"li",
+  className :"list-group-item d-flex",
+
   legVehicleTemplate: _.template($('#leg_vehicle').html()),
   legWalkTemplate: _.template($('#leg_walk').html()),
 
   events: {
-    'mouseenter': 'highlightPolyline',
-    'mouseleave': 'resetPolyline'
+    'click': 'zoom',
+    'mouseleave': 'resetPolyline',
+    'mouseover': 'highlightPolyline'
   },
 
   render: function () {
@@ -21,13 +25,25 @@ var LegView = Backbone.View.extend({
     // console.log("LegView render ended");
     return this;
   },
+  zoom: function(){
 
+    var bounds = new google.maps.LatLngBounds();
+    console.dir(this.model.get("marker").getPosition());
+    var lat = this.model.get("points")[this.model.get("points").length - 1].lat;
+    var lng = this.model.get("points")[this.model.get("points").length - 1].lng;
+    bounds.extend(this.model.get("marker").getPosition());
+    bounds.extend(new google.maps.LatLng(lat,lng));
+    map.fitBounds(bounds);
+
+  },
   highlightPolyline: function(){
     this.model.get("polyline").setOptions({strokeWeight: 10});
 
 
+
   },
   resetPolyline: function(){
+
     this.model.get("polyline").setOptions({strokeWeight: 5});
 
   },
@@ -37,6 +53,7 @@ var LegView = Backbone.View.extend({
     this.remove();
     this.unbind();
     this.model.get("polyline").setMap(null);
+    this.model.get("marker").setMap(null);
   }
 });
 
@@ -47,9 +64,11 @@ var LegHeaderView = Backbone.View.extend({
   legHeaderTemplate : _.template($('#itenerary_header').html()),
 
   render : function(){
-
+    console.log("render start");
+    console.dir(this.model.attributes);
     this.$el.html(this.legHeaderTemplate(this.model.attributes));
-    // console.dir(this.model.attributes);
+
+    console.log("render end");
     return this;
   },
   close: function(){
@@ -63,6 +82,7 @@ var LegHeaderView = Backbone.View.extend({
 var IteneraryTabView = Backbone.View.extend({
 
   tagName : "li",
+  className: "nav-item",
 
   template : _.template($('#itenerary_tab').html()),
 
@@ -97,8 +117,9 @@ var IteneraryTabView = Backbone.View.extend({
         children.childViews.forEach(function(child){
 
           if(child.model.get("polyline")){
-            console.dir(child.model.get("polyline"));
             child.model.get("polyline").setOptions({strokeOpacity: 0});
+            child.model.get("marker").setVisible(false);
+            child.model.get("polyline").setOptions({strokeWeight: 5});
           }
 
         });
@@ -106,12 +127,17 @@ var IteneraryTabView = Backbone.View.extend({
     });
     // console.dir(this.childViews);
 
+    var bounds = new google.maps.LatLngBounds();
+
     this.childViews.forEach(function(child,i){
       if(child.model.get("polyline")){
         // console.dir(child.model.get("polyline"));
         child.model.get("polyline").setOptions({strokeOpacity: 1.0});
+        child.model.get("marker").setVisible(true);
+        bounds.extend(child.model.get("marker").getPosition());
       }
     });
+    map.fitBounds(bounds);
 
   },
 
@@ -125,6 +151,10 @@ var IteneraryTabContentView = Backbone.View.extend({
 
   tabContentTemplate : _.template($('#tab-number').html()),
 
+  events:{
+    'mouseleave .card': 'resetPolyline'
+  },
+
 
   initialize: function (options) {
     this.childViews = [];
@@ -134,18 +164,13 @@ var IteneraryTabContentView = Backbone.View.extend({
     this.$el.html(this.tabContentTemplate(this.model.attributes));
 
     var childViews = this.childViews;
-    var tab = this.$("#sidebar-content");
-    var title = this.$(".sidebar-title");
+    var tab = this.$(".list-group");
+    var title = this.$(".card-header");
     var IteneraryTabContentView = this;
 
     this.model.get("legs").forEach(function(leg, i){
 
-
-
         var model = new LegModel(leg);
-
-
-
         var line = new google.maps.Polyline({
           path: leg.points,
           geodesic: false,
@@ -155,7 +180,26 @@ var IteneraryTabContentView = Backbone.View.extend({
         });
         line.setMap(map);
 
-        model.set({polyline: line});
+
+
+        var start = leg.conveyance.primary;
+        if(start == "RAIL")start = leg.route;
+        var markerImage = new google.maps.MarkerImage('icons/'+start+' White.svg',
+                new google.maps.Size(400, 400),
+                new google.maps.Point(0, 0),
+                new google.maps.Point(15, 15));
+
+
+        var marker = new google.maps.Marker({
+          position: new google.maps.LatLng(leg.points[0].lat, leg.points[0].lng),
+          icon: markerImage,
+          map: map
+        });
+
+        model.set({
+          polyline: line,
+          marker: marker
+        });
 
         var view = new LegView({model:model});
 
@@ -172,12 +216,30 @@ var IteneraryTabContentView = Backbone.View.extend({
     // console.dir(this.model);
 
     var view = new LegHeaderView({model:this.model});
-    this.$(".sidebar-title").html(view.render().$(".list-group"));
+    title.html(view.render().el);
     this.childViews.push(view);
 
-    // console.log("LeagHeader view end create");
+    console.log("LeagHeader view end create");
     // console.log("IteneraryTabContentView render ended");
     return this;
+  },
+
+  resetPolyline: function(){
+
+    var bounds = new google.maps.LatLngBounds();
+    this.childViews.forEach(function(child,i){
+      if(child.model.get("polyline")){
+        console.log("in!");
+        // console.dir(child.model.get("polyline"));
+        child.model.get("polyline").setOptions({strokeWeight: 5});
+        // child.model.get("polyline").setOptions({strokeOpacity: 1.0});
+        // child.model.get("marker").setVisible(true);
+        bounds.extend(child.model.get("marker").getPosition());
+        console.log("out!");
+      }
+    });
+
+    map.fitBounds(bounds);
   },
   close: function(){
     // console.log("IteneraryTabContentView cleaning started!");
@@ -195,7 +257,7 @@ var IteneraryTabContentView = Backbone.View.extend({
 
 var AppView = Backbone.View.extend({
 
-  el: $("#right-sidebar"),
+  el: $("#content"),
 
 
 
@@ -212,8 +274,8 @@ var AppView = Backbone.View.extend({
     this.clean();
     // console.log("appview render start!");
 
-    this.$("#tab").html("");
-    this.$("#tab-content").html("");
+    this.$("#duration_tab").html("");
+    this.$(".tab-content").html("");
 
     // console.log("appview render started");
     // console.log(this.childViews);
@@ -222,7 +284,7 @@ var AppView = Backbone.View.extend({
 
     var tabNumberChildViews = this.tabNumberChildViews;
     var iteneraryTabChildViews = this.iteneraryTabChildViews ;
-
+    var bounds = new google.maps.LatLngBounds();
 
     _.each(this.model.get("iteneraries"), function(itenerary,i){
       var model = new IteneraryModel(itenerary);
@@ -240,7 +302,7 @@ var AppView = Backbone.View.extend({
 
       // console.dir(view);
       // console.log("IteneraryTabView creation successful! index: " + i);
-      this.$("#tab").append(iteneraryTabViewInstance.render().el);
+      this.$("#duration_tab").append(iteneraryTabViewInstance.render().el);
 
       // console.log("IteneraryTabView append to #tab div successful! index: " + i);
 
@@ -252,13 +314,23 @@ var AppView = Backbone.View.extend({
       iteneraryTabViewInstance.childViews = view.childViews;
       iteneraryTabViewInstance.familyViews = iteneraryTabChildViews;
 
+
       tabNumberChildViews.push(view);
-      // console.log("IteneraryTabContentView creation successful! index: " + i);
-      this.$("#tab-content").append(view.render().$(".tab-pane"));
-      // console.log("IteneraryTabContentView append to #tab-content div successful! index: " + i);
+      console.log("IteneraryTabContentView creation successful! index: " + i);
+      this.$(".tab-content").append(view.render().$(".tab-pane"));
+      console.log("IteneraryTabContentView append to #tab-content div successful! index: " + i);
       //console.log("IteneraryTabContentView was pushed to childViews! index: " + i);
     });
 
+    this.tabNumberChildViews.forEach(function(child1){
+      child1.get("childViews").forEach(function(item){
+        if(item.model.get("marker")){
+          bounds.extend(item.model.get("marker").getPosition());
+        }
+      });
+    });
+
+    map.fitBounds(bounds);
    // console.log("appview render ended");
 
     return this;
