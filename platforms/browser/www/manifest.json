@@ -1,0 +1,11 @@
+{
+  "background_color": "#FFF",
+  "display": "standalone",
+  "name": "WayTo",
+  "short_name": "WayTo",
+  "version": "com.phonegap.first",
+  "description": "A Multimodal Trip Planner",
+  "author": "PhoneGap Team",
+  "icons": [],
+  "start_url": "index.html"
+}

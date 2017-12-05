@@ -97,28 +97,6 @@
           //appViewInstance.render();
           console.log("appview model set iteneraries successful!");
 
-          // results.forEach(function(item,i){
-          //   // var collection = new IteneraryList();
-          //   //
-          //   // collectionArray.push();
-          //
-          //   item.legs.forEach(function(legs,j){
-          //     var lines = new google.maps.Polyline({
-          //       path: legs.points,
-          //       geodesic: true,
-          //       strokeColor: colors[i],
-          //       strokeOpacity: 1.0,
-          //       strokeWeight: 2
-          //     });
-          //
-          //     lines.setMap(map);
-          //     item.polyline = lines;
-          //     //itenerary.push(item);
-          //
-          //     // collection.create();
-          //   });
-          //
-          // });
         }
         else {
           // router.set('results', null);

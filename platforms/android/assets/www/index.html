@@ -15,30 +15,30 @@
     <link rel="stylesheet" href="css/index.css">
 </head>
 
-<body>
-  <div id="content" class="container-fluid d-flex flex-column p-0">
+<body class="container-fluid d-flex flex-column p-0 m-0">
+  <nav id="navbar" class="navbar navbar-light bg-light justify-content-between">
+    <a class="navbar-brand" href="#">
+      <img src="icons/Logo 1.svg" width="30" height="30" class="d-inline-block align-top" alt="">
+      WayTo
+    </a>
+    <div class="form-inline">
+      <input placeholder="Origin" id="originAutocomplete" class="form-control mr-sm-2" aria-label="Origin">
+      <input placeholder="Destination" id="destinationAutocomplete" class="form-control mr-sm-2" aria-label="Search" aria-label="Destination">
+      <button id="searchButton" class="btn btn-outline-success my-2 my-sm-0">Go</button>
+    </div>
 
-    <nav class="navbar navbar-light bg-light justify-content-between">
-      <a class="navbar-brand" href="#">
-        <img src="icons/Logo 1.svg" width="30" height="30" class="d-inline-block align-top" alt="">
-        WayTo
-      </a>
-      <div class="form-inline">
-        <input placeholder="Origin" id="originAutocomplete" class="form-control mr-sm-2" aria-label="Origin">
-        <input placeholder="Destination" id="destinationAutocomplete" class="form-control mr-sm-2" aria-label="Search" aria-label="Destination">
-        <button id="searchButton" class="btn btn-outline-success my-2 my-sm-0">Go</button>
-      </div>
+  </nav>
+  <div id="content" class="col d-flex p-0">
 
-    </nav>
-    <div id="itenerary_list" class="">
-      <div class="col-12 p-0">
-        <ul class="nav nav-tabs nav-fill" id="duration_tab" role="tablist">
+    <div id="tab_itenerary" class="d-none flex-column flex-nowrap align-items-stretch ">
+      <div id="tab_duration" class="p-0">
+        <ul class="nav nav-tabs container-fluid nav-fill d-flex flex-nowrap p-0" id="duration_tab" role="tablist">
 
           <!-- ......... -->
 
         </ul>
       </div>
-      <div id="itenerary_mobile" class="col-sm-12">
+      <div id="itenerary_list_landscape" class="tab-content col p-0">
 
       </div>
     </div>
@@ -46,7 +46,7 @@
 
     </div>
 
-    <div class="tab-content">
+    <div id="itenerary_list_portrait" class="d-none tab-content">
 
         <!-- ......... -->
 
@@ -57,7 +57,6 @@
                   <!-- Templates -->
 
 <script id="leg_walk" type="text/template">
-  <li class="list-group-item d-flex">
     <div class="col-2 text-center p-0">
       <img src="icons/<%= conveyance.primary %> White.svg" width="25px" height="25px" class="d-inline-block" alt="">
       <div class="col-12 p-0"><small><%= formatDuration(duration) %></small></div>
@@ -75,7 +74,7 @@
       </ul>
 
     </div>
-  </li>
+
 </script>
 <script id="leg_vehicle" type="text/template">
 
@@ -115,7 +114,7 @@
         if(veh == "WALK") return;
         if(veh == "RAIL") veh = item.route;
         %>
-          <div class="col-12">
+          <div class="col-12 p-0">
             <img src="icons/<%= veh %> Black.svg" width="25px" height="25px" class="d-inline-block" alt="">
             <span class="badge badge-dark ml-2"><%= item.conveyance.primary %></span>
             <span class="ml-3"><%= item.route %></span>
@@ -130,13 +129,13 @@
 </script>
 
 <script id="itenerary_tab" type="text/template">
-    <span class="nav-link <% status %>" data-toggle="tab" href="#tab-<%= tabId %>" role="tab" aria-selected="true"  aria-controls="tabControl-<%= tabId %>">
-      <%= formatDuration(duration) %>
+    <span class="nav-link <% status %> py-2 px-0 text-center col" aria-selected="true">
+      <b><%= formatDuration(duration) %></b>
     </span>
 </script>
 
 <script id="tab-number" type="text/template">
-  <div class="card tab-pane fade <% if(status=='active'){ %><%= 'show '+ status %><% } %>" id="tab-<%= tabId %>" role="tabpanel" aria-labelledby="tabId-<%= tabId %>">
+  <div class="card tab-pane fade tab-<%= tabId %>" >
     <div class="card-header">
       <!-- ............ -->
     </div>
@@ -165,8 +164,15 @@
 
 
     <!-- Backbone MV* -->
-    <script src="js/model.js"></script>
-    <script src="js/view.js"></script>
+    <script src="js/models/LegModel.js"></script>
+    <script src="js/models/IteneraryModel.js"></script>
+    <script src="js/models/AppModel.js"></script>
+
+    <script src="js/views/LegView.js"></script>
+    <script src="js/views/LegHeaderView.js"></script>
+    <script src="js/views/IteneraryTabView.js"></script>
+    <script src="js/views/IteneraryTabContentView.js"></script>
+    <script src="js/views/AppView.js"></script>
 
     <!-- Custom Scripts -->
     <script src="js/util.js"></script>
