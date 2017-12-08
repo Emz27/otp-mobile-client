@@ -1,0 +1,25 @@
+{
+  "prepare_queue": {
+    "installed": [],
+    "uninstalled": []
+  },
+  "config_munge": {
+    "files": {}
+  },
+  "installed_plugins": {
+    "cordova-plugin-statusbar": {
+      "PACKAGE_NAME": "com.phonegap.first"
+    },
+    "cordova-plugin-vibration": {
+      "PACKAGE_NAME": "com.phonegap.first"
+    },
+    "cordova-plugin-console": {
+      "PACKAGE_NAME": "com.phonegap.first"
+    },
+    "phonegap-plugin-push": {
+      "FCM_VERSION": "11.0.1",
+      "PACKAGE_NAME": "com.phonegap.first"
+    }
+  },
+  "dependent_plugins": {}
+}

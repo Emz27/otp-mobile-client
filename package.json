@@ -18,7 +18,12 @@
       "cordova-plugin-inappbrowser": {},
       "cordova-plugin-network-information": {},
       "cordova-plugin-vibration": {},
-      "cordova-plugin-whitelist": {}
+      "cordova-plugin-whitelist": {},
+      "cordova-plugin-statusbar": {},
+      "cordova-plugin-console": {},
+      "phonegap-plugin-push": {
+        "FCM_VERSION": "11.0.1"
+      }
     }
   },
   "dependencies": {
@@ -26,6 +31,7 @@
     "cordova-browser": "~5.0.1",
     "cordova-plugin-battery-status": "~1.2.4",
     "cordova-plugin-camera": "~2.4.1",
+    "cordova-plugin-console": "^1.1.0",
     "cordova-plugin-device": "~1.1.6",
     "cordova-plugin-dialogs": "~1.3.3",
     "cordova-plugin-file": "~4.3.3",
@@ -34,7 +40,9 @@
     "cordova-plugin-inappbrowser": "~1.7.1",
     "cordova-plugin-media-capture": "~1.4.3",
     "cordova-plugin-network-information": "~1.3.3",
+    "cordova-plugin-statusbar": "~2.3.0",
     "cordova-plugin-vibration": "~2.1.5",
-    "cordova-plugin-whitelist": "~1.3.3"
+    "cordova-plugin-whitelist": "~1.3.3",
+    "phonegap-plugin-push": "^2.1.2"
   }
 }

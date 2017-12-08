@@ -156,6 +156,9 @@ var MonitorView = Backbone.View.extend({
         var stopCheckpoint = this.remainingStops.indexOf(this.remainingCheckpoints[nearCheckpoint]);
         if(stopCheckpoint != -1){
           // notification to user
+          if (cordova.platformId == 'android') {
+              StatusBar.backgroundColorByHexString("#333");
+          }
           console.log("stopCheckpoint index: "+stopCheckpoint);
           console.log("nearCheckpoint index: "+nearCheckpoint);
           alert("you are approaching a stop");// temporary alert!

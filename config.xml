@@ -10,6 +10,9 @@
     <content src="index.html" />
     <preference name="DisallowOverscroll" value="true" />
     <preference name="android-minSdkVersion" value="14" />
+    <feature name="StatusBar">
+        <param name="ios-package" onload="true" value="CDVStatusBar" />
+    </feature>
     <platform name="android">
         <icon density="ldpi" src="www/res/icon/android/drawable-ldpi-icon.png" />
         <icon density="mdpi" src="www/res/icon/android/drawable-mdpi-icon.png" />
@@ -94,6 +97,7 @@
         <allow-navigation href="http://*/*" />
         <allow-navigation href="https://*/*" />
         <allow-navigation href="data:*" />
+        <resource-file src="google-services.json" target="app/google-services.json" />
     </platform>
     <platform name="ios">
         <allow-intent href="itms:*" />
@@ -112,4 +116,9 @@
     <plugin name="cordova-plugin-network-information" spec="~1.3.3" />
     <plugin name="cordova-plugin-vibration" spec="~2.1.5" />
     <plugin name="cordova-plugin-whitelist" spec="~1.3.3" />
+    <plugin name="cordova-plugin-statusbar" spec="~2.3.0" />
+    <plugin name="cordova-plugin-console" spec="^1.1.0" />
+    <plugin name="phonegap-plugin-push" spec="^2.1.2">
+        <variable name="FCM_VERSION" value="11.0.1" />
+    </plugin>
 </widget>
