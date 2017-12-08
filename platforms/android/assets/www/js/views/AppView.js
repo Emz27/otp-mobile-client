@@ -16,12 +16,6 @@ var AppView = Backbone.View.extend({
 
     this.clean();
     // console.log("appview render start!");
-
-    this.$("#duration_tab").html("");
-    this.$("#itenerary_list_portrait").html("");
-    this.$("#itenerary_list_landscape").html("");
-
-    // console.log("appview render started");
     // console.log(this.childViews);
 
     //console.dir(this.model.get("iteneraries"));
@@ -49,9 +43,6 @@ var AppView = Backbone.View.extend({
       this.$("#duration_tab").append(iteneraryTabViewInstance.render().el);
 
       // console.log("IteneraryTabView append to #tab div successful! index: " + i);
-
-
-
       var view = new IteneraryTabContentView({model: model});
 
 
@@ -59,10 +50,6 @@ var AppView = Backbone.View.extend({
       iteneraryTabViewInstance.familyViews = iteneraryTabChildViews;
 
       view.render();
-
-
-
-
 
       var portrait = new IteneraryTabContentView({ model: view.model,clone:true });
       var landscape = new IteneraryTabContentView({ model: view.model,clone:true });
@@ -102,7 +89,7 @@ var AppView = Backbone.View.extend({
       });
     });
 
-    
+
 
     map.fitBounds(bounds);
     console.log("appview render ended");
@@ -127,6 +114,11 @@ var AppView = Backbone.View.extend({
     console.log("tab content removed");
     this.iteneraryTabChildViews = [];
     this.tabNumberChildViews = [];
+
+    this.$("#duration_tab").html("");
+    this.$("#itenerary_list_portrait").html("");
+    this.$("#itenerary_list_landscape").html("");
+
     console.log("Appview CLeaned!");
   }
 });

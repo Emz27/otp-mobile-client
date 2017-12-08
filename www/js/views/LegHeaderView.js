@@ -17,6 +17,7 @@ var LegHeaderView = Backbone.View.extend({
   },
   startMonitor: function(){
     this.monitorView = new MonitorView({model: this.model});
+    this.monitorView.legViews = this.siblingViews;
     $("#monitor").html(this.monitorView.render().el);
     $("#tab_duration").hide();
     $(".start_monitor").css("display","none");
@@ -24,18 +25,18 @@ var LegHeaderView = Backbone.View.extend({
     $("#monitor").show();
   },
   stopMonitor: function(){
-    $("#tab_duration").show();
-    $(".stop_monitor").css("display","none");
-    $(".start_monitor").css("display","initial");
-    $("#monitor").hide();
-    this.monitorView.remove();
-    this.monitorView.unbind();
+
+    this.monitorView.close();
 
   },
   close: function(){
 
     this.remove();
     this.unbind();
+    if(this.monitorView){
+      this.stopMonitor();
+    }
+
   }
 
 });

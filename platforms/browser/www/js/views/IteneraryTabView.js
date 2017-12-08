@@ -53,13 +53,13 @@ var IteneraryTabView = Backbone.View.extend({
 
     this.childViews.forEach(function(child,i){
       if(child.model.get("polyline")){
-        console.dir(child.model.get("polyline"));
+        // console.dir(child.model.get("polyline"));
         child.model.get("polyline").setOptions({strokeOpacity: 1.0});
-        console.log("marker visible");
+        // console.log("marker visible");
         child.model.get("marker").setVisible(true);
-        console.log("marker visible");
+        // console.log("marker visible");
         bounds.extend(child.model.get("marker").getPosition());
-        console.log("bounds extend");
+        // console.log("bounds extend");
       }
     });
     map.fitBounds(bounds);

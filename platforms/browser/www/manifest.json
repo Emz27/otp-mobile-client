@@ -5,7 +5,7 @@
   "short_name": "WayTo",
   "version": "com.phonegap.first",
   "description": "A Multimodal Trip Planner",
-  "author": "PhoneGap Team",
+  "author": "BenGerLen",
   "icons": [],
   "start_url": "index.html"
 }

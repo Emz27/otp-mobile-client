@@ -26,7 +26,7 @@ var IteneraryTabContentView = Backbone.View.extend({
         var model = new LegModel(leg);
 
         if(clone != true){
-          console.dir(clone);
+
           var line = new google.maps.Polyline({
             path: leg.points,
             geodesic: false,
@@ -75,6 +75,7 @@ var IteneraryTabContentView = Backbone.View.extend({
     var view = new LegHeaderView({model:this.model});
     title.html(view.render().el);
     this.childViews.push(view);
+    view.siblingViews = this.childViews;
 
     console.log("LeagHeader view end create");
     // console.log("IteneraryTabContentView render ended");
