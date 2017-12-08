@@ -9,6 +9,10 @@
 
   var appModelInstance;
   var appViewInstance;
+  var initialPosition={};
+  initialPosition.lat = 0;
+  initialPosition.lng = 0;
+
 
   var colors = [
     "#4169E1",// royal blue
@@ -17,10 +21,16 @@
   ];
 
 
-
-
-
-
+  var getInitialPositionSuccess = function(position){
+    // alert("you can use youre current location as origin");
+    this.lat = position.coords.latitude;
+    this.lng = position.coords.longitude;
+    $('#originAutocomplete').val("Use Current Position");
+  }
+  var getInitialPositionError = function(error){
+    $('#originAutocomplete').val("");
+    // alert("error msg: "+ error.message);
+  }
   function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
       center: {lat: 14.591667, lng: 121.094006},
@@ -37,28 +47,30 @@
     appModelInstance = new AppModel();
     appViewInstance = new AppView({model: appModelInstance});
 
-    //
-    // console.dir(appModelInstance);
-    // console.dir(appViewInstance);
-
-
-
-
 
     $("#searchButton").on("click",function(){
-
-
-
-      var origin = originAutocomplete.getPlaces();
-      var destination = destinationAutocomplete.getPlaces();
       var originLat,originLng,destinationLat,destinationLng,originLocation,destinationLocation;
+      var origin =null;
+      var destination=null;
+      if(($("#originAutocomplete").val() == "Use Current Position") &&( initialPosition.lat != 0 || initialPosition.lng != 0)){
+
+        origin = initialPosition.lat+","+initialPosition.lng;
+        alert(origin);
+      }
+      else{
+        origin = originAutocomplete.getPlaces();
+        origin = searchBoxGetLocation(origin);
+        alert("no pos: "+origin);
+      }
+      destination = destinationAutocomplete.getPlaces();
+      destination = searchBoxGetLocation(destination);
+
       if (origin.length == 0 || destination.length == 0) {
             return;
       }
-
       otp.route(
-        searchBoxGetLocation(origin),
-        searchBoxGetLocation(destination),
+        origin,
+        destination,
         'TRANSIT,WALK'
       )
       .then(function(data) {
@@ -114,7 +126,9 @@
   });
 
   document.addEventListener('deviceready', function(){
-
+    // alert("device ready");
+    navigator.geolocation.getCurrentPosition(getInitialPositionSuccess.bind(initialPosition), getInitialPositionError.bind(initialPosition),{ enableHighAccuracy: true });
+    StatusBar.hide();
     console.log('calling push init');
     var push = PushNotification.init({
         "android": {

@@ -151,7 +151,7 @@ var MonitorView = Backbone.View.extend({
                   }.bind(this));
 
       if(nearCheckpoint != -1){
-        this.lastCheckpoint = this.remainingCheckpoints[nearCheckpoint];
+        var currentCheckpoint = this.remainingCheckpoints[nearCheckpoint];
         // array.indexOf(item, start)
         var stopCheckpoint = this.remainingStops.indexOf(this.remainingCheckpoints[nearCheckpoint]);
         if(stopCheckpoint != -1){
@@ -159,6 +159,12 @@ var MonitorView = Backbone.View.extend({
           if (cordova.platformId == 'android') {
               StatusBar.backgroundColorByHexString("#333");
           }
+          navigator.notification.alert(
+              "Maghanda na sa pagbaba.",         // message
+              null,                 // callback
+              "Stop Alert",           // title
+              'Ok'                  // buttonName
+          );
           console.log("stopCheckpoint index: "+stopCheckpoint);
           console.log("nearCheckpoint index: "+nearCheckpoint);
           alert("you are approaching a stop");// temporary alert!
@@ -171,14 +177,15 @@ var MonitorView = Backbone.View.extend({
         console.log("removedCheckpoints: "+ removedCheckpoints);
         // array.reduce(function(total, currentValue, currentIndex, arr), initialValue)
         var removedDistance = 0;
-        if(nearCheckpoint != 0 && removedCheckpoints.length > 0){
-          removedDistance = removedCheckpoints.reduce(function(total,point,currentIndex,arr){
-            if(currentIndex == 0) return total;
-            return total + google.maps.geometry.spherical.computeDistanceBetween(arr[currentIndex-1], point);
-          });
-        }
 
+        removedDistance = removedCheckpoints.reduce(function(total,point,currentIndex,arr){
+          if(currentIndex == 0) return total;
+          return total + google.maps.geometry.spherical.computeDistanceBetween(arr[currentIndex-1], point);
+        });
+
+        this.distanceTravelled += google.maps.geometry.spherical.computeDistanceBetween(this.lastCheckpoint, currentCheckpoint);
         this.distanceTravelled += removedDistance;
+        this.lastCheckpoint = currentCheckpoint;
         var progress = Math.floor((this.distanceTravelled/this.totalPathDistance) * 100);
         this.$(".progress-bar").css("width",progress);
       }

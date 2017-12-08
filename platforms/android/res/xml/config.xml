@@ -51,4 +51,5 @@
     <preference name="loglevel" value="DEBUG" />
     <preference name="DisallowOverscroll" value="true" />
     <preference name="android-minSdkVersion" value="14" />
+    <preference name="StatusBarOverlaysWebView" value="true" />
 </widget>
