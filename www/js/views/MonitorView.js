@@ -19,6 +19,20 @@ var MonitorView = Backbone.View.extend({
     this.remainingStopViews = [];
     this.currentPosition = {};
 
+    this.remainingCheckpointMarkers = [];//     
+    this.lastCheckpointMarker = {};//
+    this.currentPositionMarker = {};
+
+    google.maps.event.addListener(map, 'click', function(event) {
+       // placeMarker(event.latLng);
+       var position;
+       position.coords.latitude = event.latLng.lat;
+       position.coords.longitude = event.latLng.lat;
+       alert(position);
+       onWatchPositionSuccess(position);
+
+    });
+
 
     this.marker = new google.maps.Marker({
       position: new google.maps.LatLng(0, 0),
@@ -61,8 +75,18 @@ var MonitorView = Backbone.View.extend({
     console.dir(points);
     for(var i = 1 ; i <= points.length ; i++){
       if(points[i]){
-        if(i == 1)points[i-1] = new google.maps.LatLng(points[i-1].lat, points[i-1].lng);
+        if(i == 1){
+          points[i-1] = new google.maps.LatLng(points[i-1].lat, points[i-1].lng);
+          this.remainingCheckpointMarkers[0] = new google.maps.Marker({
+            position: new google.maps.LatLng(points[0].lat, points[0].lng),
+            map: map
+          });
+        }
         points[i] = new google.maps.LatLng(points[i].lat, points[i].lng);
+        this.remainingCheckpointMarkers[i] = new google.maps.Marker({
+          position: points[i],
+          map: map
+        });
         this.totalPathDistance += google.maps.geometry.spherical.computeDistanceBetween(points[i-1], points[i]);
         // console.log("totalPathDistance: "+this.totalPathDistance);
       }else{
@@ -70,6 +94,7 @@ var MonitorView = Backbone.View.extend({
         points.splice(i,1);
       }
     }
+    this.remainingCheckpoints = points;
 
     console.log("totalPathDistance: "+this.totalPathDistance);
     this.model.set({totalPathDistance: this.totalPathDistance});
@@ -173,6 +198,9 @@ var MonitorView = Backbone.View.extend({
           this.remainingStopViews.splice(0,stopCheckpoint+1);
         }
         var removedCheckpoints = [];
+        for(var i =0;i<=;i++){
+          this.remainingCheckpointMarkers[i].setMap(null);
+        }
         removedCheckpoints.push.apply(removedCheckpoints,this.remainingCheckpoints.splice(0,nearCheckpoint+1));
         console.log("removedCheckpoints: "+ removedCheckpoints);
         // array.reduce(function(total, currentValue, currentIndex, arr), initialValue)
