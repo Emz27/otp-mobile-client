@@ -55,12 +55,12 @@
       if(($("#originAutocomplete").val() == "Use Current Position") &&( initialPosition.lat != 0 || initialPosition.lng != 0)){
 
         origin = initialPosition.lat+","+initialPosition.lng;
-        alert(origin);
+        // alert(origin);
       }
       else{
         origin = originAutocomplete.getPlaces();
         origin = searchBoxGetLocation(origin);
-        alert("no pos: "+origin);
+        // alert("no pos: "+origin);
       }
       destination = destinationAutocomplete.getPlaces();
       destination = searchBoxGetLocation(destination);

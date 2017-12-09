@@ -23,15 +23,7 @@ var MonitorView = Backbone.View.extend({
     this.lastCheckpointMarker = {};//
     this.currentPositionMarker = {};
 
-    google.maps.event.addListener(map, 'click', function(event) {
-       // placeMarker(event.latLng);
-       var position;
-       position.coords.latitude = event.latLng.lat;
-       position.coords.longitude = event.latLng.lat;
-       alert(position);
-       onWatchPositionSuccess(position);
 
-    });
 
 
     this.marker = new google.maps.Marker({
@@ -48,12 +40,27 @@ var MonitorView = Backbone.View.extend({
       // zIndex:99999999,
       map: map
     });
+
+    var this1 = this;
+    var onWatchPositionSuccess = this.onWatchPositionSuccess.bind(this);
+
+    google.maps.event.addListener(map, 'click', function(event) {
+       // placeMarker(event.latLng);
+       var position={};
+       position.coords ={};
+       position.coords.latitude = event.latLng.lat();
+       position.coords.longitude = event.latLng.lng();
+       console.dir(event.latLng);
+       // alert(position);
+       onWatchPositionSuccess(position);
+
+    });
     console.log("marker created");
   },
 
   render: function () {
     this.legViews.pop();
-
+    console.log("testtestAAA"+this.legViews[0].model.get("points")[1].lng);
     this.startPoint = new google.maps.LatLng(this.legViews[0].model.get("points")[1].lat,this.legViews[0].model.get("points")[1].lng);
     this.lastCheckpoint = new google.maps.LatLng(this.legViews[0].model.get("points")[1].lat,this.legViews[0].model.get("points")[1].lng);
     console.log("lastCheckpoint: "+ this.lastCheckpoint);
@@ -73,12 +80,12 @@ var MonitorView = Backbone.View.extend({
     })
     points.shift();
     console.dir(points);
-    for(var i = 1 ; i <= points.length ; i++){
+    for(var i = 1 ; i < points.length ; i++){
       if(points[i]){
         if(i == 1){
           points[i-1] = new google.maps.LatLng(points[i-1].lat, points[i-1].lng);
           this.remainingCheckpointMarkers[0] = new google.maps.Marker({
-            position: new google.maps.LatLng(points[0].lat, points[0].lng),
+            position: points[0],
             map: map
           });
         }
@@ -165,8 +172,9 @@ var MonitorView = Backbone.View.extend({
         notification if the user reached a certain radius of a stop
       */
 
-
+      console.log("pos latitude: "+ position.coords.latitude +", pos longitude: "+position.coords.longitude);
       this.currentPosition = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
+      console.dir(this.currentPosition);
       this.marker.setPosition(this.currentPosition);
 
       // loop through remainingCheckpoints
@@ -198,23 +206,28 @@ var MonitorView = Backbone.View.extend({
           this.remainingStopViews.splice(0,stopCheckpoint+1);
         }
         var removedCheckpoints = [];
-        for(var i =0;i<=;i++){
+        for(var i =0;i<=nearCheckpoint;i++){
           this.remainingCheckpointMarkers[i].setMap(null);
+          this.remainingCheckpointMarkers.shift();
         }
+
         removedCheckpoints.push.apply(removedCheckpoints,this.remainingCheckpoints.splice(0,nearCheckpoint+1));
         console.log("removedCheckpoints: "+ removedCheckpoints);
         // array.reduce(function(total, currentValue, currentIndex, arr), initialValue)
         var removedDistance = 0;
-
-        removedDistance = removedCheckpoints.reduce(function(total,point,currentIndex,arr){
-          if(currentIndex == 0) return total;
-          return total + google.maps.geometry.spherical.computeDistanceBetween(arr[currentIndex-1], point);
-        });
-
+        if(removedCheckpoints.length == 1){
+          for(var i=1; i<removedCheckpoints.length;i++){
+            removedDistance += google.maps.geometry.spherical.computeDistanceBetween(item[i-1], item[i]);
+          }
+        }
+        
         this.distanceTravelled += google.maps.geometry.spherical.computeDistanceBetween(this.lastCheckpoint, currentCheckpoint);
         this.distanceTravelled += removedDistance;
         this.lastCheckpoint = currentCheckpoint;
+        console.log("distance travelled: "+ this.distanceTravelled);
+        // console.log("lastCheckpoint: "+this.lastCheckpoint);
         var progress = Math.floor((this.distanceTravelled/this.totalPathDistance) * 100);
+        console.log("progress: "+ progress);
         this.$(".progress-bar").css("width",progress);
       }
       else{
