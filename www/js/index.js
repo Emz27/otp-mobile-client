@@ -49,22 +49,34 @@
 
 
     $("#searchButton").on("click",function(){
+
+      $("#originAutocomplete").prop('disabled', true);
+      $("#destinationAutocomplete").prop('disabled', true);
+      $("#searchButton").prop('disabled', true);
       var originLat,originLng,destinationLat,destinationLng,originLocation,destinationLocation;
       var origin =null;
       var destination=null;
-      if(($("#originAutocomplete").val() == "Use Current Position") &&( initialPosition.lat != 0 || initialPosition.lng != 0)){
+      try{
+        if(($("#originAutocomplete").val() == "Use Current Position") &&( initialPosition.lat != 0 || initialPosition.lng != 0)){
 
-        origin = initialPosition.lat+","+initialPosition.lng;
-        // alert(origin);
+          origin = initialPosition.lat+","+initialPosition.lng;
+          // alert(origin);
+        }
+        else{
+          origin = originAutocomplete.getPlaces();
+          origin = searchBoxGetLocation(origin);
+          // alert("no pos: "+origin);
+        }
+        destination = destinationAutocomplete.getPlaces();
+        destination = searchBoxGetLocation(destination);
       }
-      else{
-        origin = originAutocomplete.getPlaces();
-        origin = searchBoxGetLocation(origin);
-        // alert("no pos: "+origin);
+      catch(err){
+        $("#originAutocomplete").prop('disabled', false);
+        $("#destinationAutocomplete").prop('disabled', false);
+        $("#searchButton").prop('disabled', false);
+        alert("Please Try Again!");
+        return;
       }
-      destination = destinationAutocomplete.getPlaces();
-      destination = searchBoxGetLocation(destination);
-
       if (origin.length == 0 || destination.length == 0) {
             return;
       }
@@ -75,7 +87,9 @@
       )
       .then(function(data) {
         //router.reset();
-
+        $("#originAutocomplete").prop('disabled', false);
+        $("#destinationAutocomplete").prop('disabled', false);
+        $("#searchButton").prop('disabled', false);
         if(data.plan) {
           results = data.plan.itineraries;
 

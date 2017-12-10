@@ -1,18 +1,12 @@
 var LegHeaderView = Backbone.View.extend({
 
   legHeaderTemplate : _.template($('#itenerary_header').html()),
-
   events: {
     "click .start_monitor": "startMonitor",
     "click .stop_monitor" : "stopMonitor"
   },
-
   render : function(){
-    console.log("render start");
-    console.dir(this.model.attributes);
     this.$el.html(this.legHeaderTemplate(this.model.attributes));
-
-    console.log("render end");
     return this;
   },
   startMonitor: function(){
@@ -25,18 +19,13 @@ var LegHeaderView = Backbone.View.extend({
     $("#monitor").show();
   },
   stopMonitor: function(){
-
     this.monitorView.close();
-
   },
   close: function(){
-
     this.remove();
     this.unbind();
     if(this.monitorView){
       this.stopMonitor();
     }
-
   }
-
 });

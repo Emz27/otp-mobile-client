@@ -19,6 +19,12 @@ var MonitorView = Backbone.View.extend({
     this.remainingStopViews = [];
     this.currentPosition = {};
 
+    this.remainingCheckpointMarkers = [];//
+    this.lastCheckpointMarker = {};//
+    this.currentPositionMarker = {};
+
+
+
 
     this.marker = new google.maps.Marker({
       position: new google.maps.LatLng(0, 0),
@@ -34,22 +40,40 @@ var MonitorView = Backbone.View.extend({
       // zIndex:99999999,
       map: map
     });
-    console.log("marker created");
+
+    // var this1 = this;
+    // var onWatchPositionSuccess = this.onWatchPositionSuccess.bind(this);
+    //
+    // google.maps.event.addListener(map, 'click', function(event) {
+    //    // placeMarker(event.latLng);
+    //    var position={};
+    //    position.coords ={};
+    //    position.coords.latitude = event.latLng.lat();
+    //    position.coords.longitude = event.latLng.lng();
+    //    // // console.dir(event.latLng);
+    //    // alert(position);
+    //    onWatchPositionSuccess(position);
+    //
+    // });
   },
 
   render: function () {
+    $("#originAutocomplete").prop('disabled', true);
+    $("#destinationAutocomplete").prop('disabled', true);
+    $("#searchButton").prop('disabled', true);
     this.legViews.pop();
-
-    this.startPoint = new google.maps.LatLng(this.legViews[0].model.get("points")[1].lat,this.legViews[0].model.get("points")[1].lng);
-    this.lastCheckpoint = new google.maps.LatLng(this.legViews[0].model.get("points")[1].lat,this.legViews[0].model.get("points")[1].lng);
-    console.log("lastCheckpoint: "+ this.lastCheckpoint);
-    this.endPoint = this.legViews[0].model.get("points")[this.legViews[0].model.get("points").length-1];
+    // console.log("testtestAAA"+this.legViews[0].model.get("points")[1].lng);
+    this.startPoint = new google.maps.LatLng(this.legViews[0].model.get("points")[0].lat,this.legViews[0].model.get("points")[0].lng);
+    this.lastCheckpoint = new google.maps.LatLng(this.legViews[0].model.get("points")[0].lat,this.legViews[0].model.get("points")[0].lng);
+    // console.log("lastCheckpoint: "+ this.lastCheckpoint);
+    // this.endPoint = this.legViews[0].model.get("points")[this.legViews[0].model.get("points").length-1];
     var totalDistance = this.totalDistance;
     var points = this.remainingCheckpoints;
     var stops = this.remainingStops;
     var stopViews = this.remainingStopViews;
 
     this.legViews.forEach(function(item,i){
+      if(i==0)return;
       totalDistance+= item.model.get("distance");
       points.push.apply(points,item.model.get("points"));
       var stop = item.model.get("points")[item.model.get("points").length-1];
@@ -58,11 +82,22 @@ var MonitorView = Backbone.View.extend({
 
     })
     points.shift();
-    console.dir(points);
-    for(var i = 1 ; i <= points.length ; i++){
+    this.remainingStops = stops;
+    this.remainingStopViews = stopViews;
+    // console.dir(points);
+    points[0] = new google.maps.LatLng(points[0].lat, points[0].lng);
+    // this.remainingCheckpointMarkers[0] = new google.maps.Marker({
+    //   position: points[0],
+    //   map: map
+    // });
+    for(var i = 1 ; i < points.length ; i++){
       if(points[i]){
-        if(i == 1)points[i-1] = new google.maps.LatLng(points[i-1].lat, points[i-1].lng);
         points[i] = new google.maps.LatLng(points[i].lat, points[i].lng);
+        // var marker = new google.maps.Marker({
+        //   position: points[i],
+        //   map: map
+        // });
+        // this.remainingCheckpointMarkers.push(marker);
         this.totalPathDistance += google.maps.geometry.spherical.computeDistanceBetween(points[i-1], points[i]);
         // console.log("totalPathDistance: "+this.totalPathDistance);
       }else{
@@ -70,7 +105,9 @@ var MonitorView = Backbone.View.extend({
         points.splice(i,1);
       }
     }
-
+    this.remainingCheckpoints = points;
+    this.points = points;
+    console.log("totalPathPoints: "+ this.points.length);
     console.log("totalPathDistance: "+this.totalPathDistance);
     this.model.set({totalPathDistance: this.totalPathDistance});
     this.$el.html(this.monitorTemplate(this.model.attributes));
@@ -78,6 +115,9 @@ var MonitorView = Backbone.View.extend({
     this.getCurrentPosition();
     this.startWatchPosition();
     return this;
+  },
+  snapToRoad: function(){
+
   },
   startWatchPosition: function(){
     this.watchId = navigator.geolocation.watchPosition(this.onWatchPositionSuccess.bind(this),
@@ -92,14 +132,14 @@ var MonitorView = Backbone.View.extend({
   },
 
   onGetPositionSuccess: function(position) {
-      console.log('Latitude: '           + position.coords.latitude              + '\n' +
-        'Longitude: '          + position.coords.longitude             + '\n' +
-        'Altitude: '           + position.coords.altitude              + '\n' +
-        'Accuracy: '           + position.coords.accuracy              + '\n' +
-        'Altitude Accuracy: '  + position.coords.altitudeAccuracy      + '\n' +
-        'Heading: '            + position.coords.heading               + '\n' +
-        'Speed: '              + position.coords.speed                 + '\n' +
-        'Timestamp: '          + position.timestamp    );
+      // console.log('Latitude: '           + position.coords.latitude              + '\n' +
+        // 'Longitude: '          + position.coords.longitude             + '\n' +
+        // 'Altitude: '           + position.coords.altitude              + '\n' +
+        // 'Accuracy: '           + position.coords.accuracy              + '\n' +
+        // 'Altitude Accuracy: '  + position.coords.altitudeAccuracy      + '\n' +
+        // 'Heading: '            + position.coords.heading               + '\n' +
+        // 'Speed: '              + position.coords.speed                 + '\n' +
+        // 'Timestamp: '          + position.timestamp    );
 
         this.currentPosition = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
         this.marker.setPosition(this.currentPosition);
@@ -115,113 +155,131 @@ var MonitorView = Backbone.View.extend({
       */
   },
   onGetPositionError: function(error){
-    console.log("get current position error message: "+ error.message);
-    console.log("get current position error code: "+ error.code);
+    // console.log("get current position error message: "+ error.message);
+    // console.log("get current position error code: "+ error.code);
     if(error.code == 1){
       alert("Location must be turned on to use 'Monitor Trip'");
       this.close();
     }
   },
   onWatchPositionSuccess: function(position) {
-      console.log('Latitude: '           + position.coords.latitude              + '\n' +
-        'Longitude: '          + position.coords.longitude             + '\n' +
-        'Altitude: '           + position.coords.altitude              + '\n' +
-        'Accuracy: '           + position.coords.accuracy              + '\n' +
-        'Altitude Accuracy: '  + position.coords.altitudeAccuracy      + '\n' +
-        'Heading: '            + position.coords.heading               + '\n' +
-        'Speed: '              + position.coords.speed                 + '\n' +
-        'Timestamp: '          + position.timestamp    );
-      /*
-        move map marker to a new position
-        update progress bar
-          -start of the leg will be the checkpoint of the progress bar
-          - distance of the leg
-          - accumulated travel distance
-        notification if the user reached a certain radius of a stop
-      */
-
-
+      console.log("================");
       this.currentPosition = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
       this.marker.setPosition(this.currentPosition);
-
-      // loop through remainingCheckpoints
       // array.findIndex(function(currentValue, index, arr), thisValue)
       var nearCheckpoint = this.remainingCheckpoints.findIndex(function(checkpoint){
-                    return google.maps.geometry.spherical.computeDistanceBetween(this.currentPosition, checkpoint) <= 10;
+                    return google.maps.geometry.spherical.computeDistanceBetween(this.currentPosition, checkpoint) <= 120;
                   }.bind(this));
 
       if(nearCheckpoint != -1){
+        console.log("----------near to checkpoint----------");
         var currentCheckpoint = this.remainingCheckpoints[nearCheckpoint];
         // array.indexOf(item, start)
-        var stopCheckpoint = this.remainingStops.indexOf(this.remainingCheckpoints[nearCheckpoint]);
+        var stopCheckpoint = this.remainingStops.findIndex(function(stop){
+              return google.maps.geometry.spherical.computeDistanceBetween(currentCheckpoint, stop) <= 120;
+            });
         if(stopCheckpoint != -1){
           // notification to user
+          console.log("----------approaching a stop----------");
+          var fare = this.remainingStopViews[stopCheckpoint].model.get("fare");
           if (cordova.platformId == 'android') {
               StatusBar.backgroundColorByHexString("#333");
           }
-          navigator.notification.alert(
-              "Maghanda na sa pagbaba.",         // message
-              null,                 // callback
-              "Stop Alert",           // title
-              'Ok'                  // buttonName
-          );
-          console.log("stopCheckpoint index: "+stopCheckpoint);
-          console.log("nearCheckpoint index: "+nearCheckpoint);
-          alert("you are approaching a stop");// temporary alert!
+          if(this.remainingStops.length == 1){
+            navigator.notification.alert(
+                "You are now approaching your Destination!\n\n giff me something",         // message
+                null,                 // callback
+                "Stop Alert",           // title
+                'Ok'                  // buttonName
+            );
+          }
+          else if(this.remainingStopViews[stopCheckpoint].model.get("conveyance").primary == "WALK"){
+            navigator.notification.alert(
+                "You are now approaching your stop!\n\n",         // message
+                null,                 // callback
+                "Stop Alert",           // title
+                'Ok'                  // buttonName
+            );
+          }
+          else if(this.remainingStopViews[stopCheckpoint].model.get("conveyance").primary == "TRAIN"){
+            navigator.notification.alert(
+                "You are now approaching your stop!\nPlease prepare to leave the train",         // message
+                null,                 // callback
+                "Stop Alert",           // title
+                'Ok'                  // buttonName
+            );
+          }
+          else {
+              navigator.notification.alert(
+                  "You are now approaching your stop!\n\nPlease prepare for your next trip and dont forget to pay your P"+ fare +" fare.",
+                  null,                 // callback
+                  "Stop Alert",           // title
+                  'Ok'                  // buttonName
+              );
+          }
+
+          // alert("you are approaching a stop");// temporary alert!
           // array.splice(index, howmany, item1, ....., itemX)
           this.remainingStops.splice(0,stopCheckpoint+1);
           this.remainingStopViews.splice(0,stopCheckpoint+1);
         }
         var removedCheckpoints = [];
+        // for(var i =0;i<=nearCheckpoint;i++){
+        //   this.remainingCheckpointMarkers[i].setMap(null);
+        // }
+        // for(var i =0;i<=nearCheckpoint;i++){
+        //   this.remainingCheckpointMarkers.shift();
+        // }
         removedCheckpoints.push.apply(removedCheckpoints,this.remainingCheckpoints.splice(0,nearCheckpoint+1));
-        console.log("removedCheckpoints: "+ removedCheckpoints);
         // array.reduce(function(total, currentValue, currentIndex, arr), initialValue)
         var removedDistance = 0;
-
-        removedDistance = removedCheckpoints.reduce(function(total,point,currentIndex,arr){
-          if(currentIndex == 0) return total;
-          return total + google.maps.geometry.spherical.computeDistanceBetween(arr[currentIndex-1], point);
-        });
-
-        this.distanceTravelled += google.maps.geometry.spherical.computeDistanceBetween(this.lastCheckpoint, currentCheckpoint);
+        if(removedCheckpoints.length != 1){
+          for(var i=1; i<removedCheckpoints.length;i++){
+            removedDistance += google.maps.geometry.spherical.computeDistanceBetween(removedCheckpoints[i-1], removedCheckpoints[i]);
+          }
+        }
+        this.distanceTravelled += google.maps.geometry.spherical.computeDistanceBetween(this.lastCheckpoint, removedCheckpoints[0]);
         this.distanceTravelled += removedDistance;
         this.lastCheckpoint = currentCheckpoint;
+        var num = this.points.indexOf(this.remainingCheckpoints[nearCheckpoint]);
+        console.log("- "+removedCheckpoints.length+" removed from list of remaining points");
+        console.log("-checkpoint number " +(num)+1+"/"+this.points.length);
         var progress = Math.floor((this.distanceTravelled/this.totalPathDistance) * 100);
-        this.$(".progress-bar").css("width",progress);
+        console.log("-distance travelled: "+ this.distanceTravelled);
+        console.log("-progress: "+ progress+"%");
+        this.$(".progress-bar").css("width",progress+"%");
       }
       else{
         var maxCheckpointDistance = google.maps.geometry.spherical.computeDistanceBetween(this.lastCheckpoint, this.remainingCheckpoints[0]);
         var currentDistanceToCheckpoint = google.maps.geometry.spherical.computeDistanceBetween(this.currentPosition, this.remainingCheckpoints[0]);
-        console.log("lastCheckpoint: "+ this.lastCheckpoint);
-        console.log("next remainingcheckpoint: "+ this.remainingCheckpoints[0]);
+        console.log("----------not near to any checkpoints----------");
         console.log("maxCheckpointDistance: "+ maxCheckpointDistance);
         console.log("currentDistanceToCheckpoint: "+ currentDistanceToCheckpoint);
-        var progress = Math.floor(this.distanceTravelled + maxCheckpointDistance - currentDistanceToCheckpoint);
+        console.log("distanceTravelled : "+ this.distanceTravelled);
+        var progress = Math.floor(((this.distanceTravelled + maxCheckpointDistance - currentDistanceToCheckpoint)/this.totalPathDistance)*100);
         if (progress < 0) progress = 0;
-        console.log("progress: "+ progress);
-        this.$(".progress-bar").css("width",progress);
+        console.log("progress : "+ progress+"%");
+        this.$(".progress-bar").css("width",progress+"%");
       }
-
-
+      console.log("================");
   },
   onWatchPositionError: function(error){
-    console.log("position watch error message: "+ error.message);
-    console.log("position watch error code: "+ error.code);
     if(error.code == 1){
       alert("Location must be turned on to use 'Monitor Trip'");
       this.close();
     }
   },
-
   close: function(){
     $("#tab_duration").show();
     $(".stop_monitor").css("display","none");
     $(".start_monitor").css("display","initial");
     $("#monitor").hide();
+    $("#originAutocomplete").prop('disabled', false);
+    $("#destinationAutocomplete").prop('disabled', false);
+    $("#searchButton").prop('disabled', false);
     this.unbind();
     this.remove();
     this.marker.setMap(null);
     this.stopWatchPosition();
-
   }
 });
