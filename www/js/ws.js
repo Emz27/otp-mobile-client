@@ -70,8 +70,11 @@ var otp = function() {
       url: API+endpoint,
       type: 'jsonp',
       data: data
+    }).fail(function (err, msg) {
+      console.log(msg);
+      stopAnimation("retry");
     }));
-  }
+    }
 
   return {
     route: function(from, to, mode) {

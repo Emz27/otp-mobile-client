@@ -63,7 +63,8 @@
     });
   }
   function startAnimation(){
-
+    // $("#originAutocomplete").prop('disabled', true);
+    // $("#destinationAutocomplete").prop('disabled', true);
     $('#navbar').animate({
         height: "100vh"
         //$('#navbar').get(0).scrollHeight
@@ -75,13 +76,18 @@
     }, 500);
 
   }
-  function stopAnimation(isStartAnimation){
+  function stopAnimation(state){
     window.clearTimeout(animTimer);
-    if(isStartAnimation){
+    if(state == "start"){
       startAnimation();
       return;
     }
     $(".animation_object").remove();
+    // $("#originAutocomplete").prop('disabled', false);
+    // $("#destinationAutocomplete").prop('disabled', false);
+    if(state == "retry"){
+      return;
+    }
     $("#navbar").removeClass("col-12");
     console.log($("#navbar")[0].scrollHeight);
     $('#navbar').animate({
@@ -103,14 +109,15 @@
     var originPlace = originAutocomplete.getPlaces();
     var destinationPlace = destinationAutocomplete.getPlaces();
     if((originInput.val() == "Use Current Location") &&( initialPosition.lat != 0 || initialPosition.lng != 0)&&(destinationPlace.length != 0)){
+      console.log("hey");
       origin = initialPosition.lat+","+initialPosition.lng;
-      destination = searchBoxGetLocation(destination);
-      stopAnimation(true);
+      destination = searchBoxGetLocation(destinationPlace);
+      stopAnimation("start");
     }
     else if(destinationPlace.length != 0 && originPlace.length != 0) {
       origin = searchBoxGetLocation(originPlace);
       destination = searchBoxGetLocation(destinationPlace);
-      stopAnimation(true);
+      stopAnimation("start");
     }
     else return;
     // $("#originAutocomplete").prop('disabled', true);
@@ -165,7 +172,10 @@
         // router.set('results', null);
         // itinerary.set('current', null);
       }
-    });
+    }).catch(function (error) {
+       console.dir(error);
+   })
+   .done();
   }
   $(document).ready(function(){
     navbarScrollHeight = $("#navbar")[0].scrollHeight;
