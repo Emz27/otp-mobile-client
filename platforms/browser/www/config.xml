@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.phonegap.first" version="0.9" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:gap="http://phonegap.com/ns/1.0">
+<widget id="com.commutethesis.bengerlen" version="0.9.4" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:gap="http://phonegap.com/ns/1.0">
     <name>WayTo</name>
     <description>
         A Multimodal Trip Planner
@@ -8,6 +8,7 @@
         BenGerLen
     </author>
     <content src="index.html" />
+    <icon src="icon.png" />
     <access origin="*" />
     <allow-intent href="*" />
     <allow-intent href="http://*/*" />
@@ -18,5 +19,4 @@
     <allow-intent href="geo:*" />
     <preference name="DisallowOverscroll" value="true" />
     <preference name="android-minSdkVersion" value="14" />
-    <preference name="StatusBarOverlaysWebView" value="true" />
 </widget>

@@ -1,7 +1,7 @@
 var LegView = Backbone.View.extend({
 
   tagName:"li",
-  className :"list-group-item d-flex",
+  className :"list-group-item d-flex px-1",
   legVehicleTemplate: _.template($('#leg_vehicle').html()),
   legWalkTemplate: _.template($('#leg_walk').html()),
   events: {

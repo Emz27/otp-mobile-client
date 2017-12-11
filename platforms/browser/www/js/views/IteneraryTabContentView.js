@@ -33,7 +33,7 @@ var IteneraryTabContentView = Backbone.View.extend({
           var start = leg.conveyance.primary;
           if(start == "RAIL")start = leg.route;
           var markerImage = new google.maps.MarkerImage('icons/'+start+' White.svg',
-                  new google.maps.Size(400, 400),
+                  new google.maps.Size(25, 25),
                   new google.maps.Point(0, 0),
                   new google.maps.Point(15, 15));
 

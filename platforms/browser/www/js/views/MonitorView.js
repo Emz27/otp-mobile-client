@@ -60,7 +60,6 @@ var MonitorView = Backbone.View.extend({
   render: function () {
     $("#originAutocomplete").prop('disabled', true);
     $("#destinationAutocomplete").prop('disabled', true);
-    $("#searchButton").prop('disabled', true);
     this.legViews.pop();
     // console.log("testtestAAA"+this.legViews[0].model.get("points")[1].lng);
     this.startPoint = new google.maps.LatLng(this.legViews[0].model.get("points")[0].lat,this.legViews[0].model.get("points")[0].lng);
@@ -276,7 +275,6 @@ var MonitorView = Backbone.View.extend({
     $("#monitor").hide();
     $("#originAutocomplete").prop('disabled', false);
     $("#destinationAutocomplete").prop('disabled', false);
-    $("#searchButton").prop('disabled', false);
     this.unbind();
     this.remove();
     this.marker.setMap(null);

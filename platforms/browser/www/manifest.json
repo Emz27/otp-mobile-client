@@ -3,9 +3,15 @@
   "display": "standalone",
   "name": "WayTo",
   "short_name": "WayTo",
-  "version": "com.phonegap.first",
+  "version": "com.commutethesis.bengerlen",
   "description": "A Multimodal Trip Planner",
   "author": "BenGerLen",
-  "icons": [],
+  "icons": [
+    {
+      "src": "icon.png",
+      "type": "image/png",
+      "sizes": "undefinedxundefined"
+    }
+  ],
   "start_url": "index.html"
 }

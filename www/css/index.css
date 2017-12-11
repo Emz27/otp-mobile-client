@@ -8,14 +8,22 @@ body{
 }
 #navbar{
   width:100%;
+  z-index: 10;
+  overflow: hidden;
 }
 .nav-link{
   font-size: .9em;
+}
+#tab_itenerary{
+  box-shadow: 0px 5px 10px grey;
+  z-index: 5;
 }
 #itenerary_list_portrait{
   max-height: 24vh;
   overflow: auto;
   display:initial;
+  box-shadow: 0px -5px 10px grey;
+  z-index: 5;
 }
 #itenerary_list_landscape{
   height:100%;
@@ -41,6 +49,9 @@ and (orientation : portrait) {
     overflow: auto;
     display:none;
   }
+  #tab_itenerary{
+    box-shadow: 0px 5px 10px grey;
+  }
 }
 @media only screen
 and (orientation : landscape) {
@@ -58,8 +69,13 @@ and (orientation : landscape) {
 
     display:initial;
   }
+  #tab_itenerary{
+    box-shadow: 5px 0px 3px grey;
+  }
 }
+@keyframes fadein {
 
+}
 
 /*// Small devices (landscape phones, 576px and up)*/
 @media (min-width: 576px) {

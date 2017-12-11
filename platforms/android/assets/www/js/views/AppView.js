@@ -30,8 +30,6 @@ var AppView = Backbone.View.extend({
 
       iteneraryTabChildViews.push(iteneraryTabViewInstance);
 
-      this.$("#duration_tab").append(iteneraryTabViewInstance.render().el);
-
       var view = new IteneraryTabContentView({model: model});
 
       iteneraryTabViewInstance.childViews = view.childViews;
@@ -55,6 +53,7 @@ var AppView = Backbone.View.extend({
 
       this.$("#itenerary_list_portrait").append(portrait.$(".tab-pane"));
       this.$("#itenerary_list_landscape").append(landscape.$(".tab-pane"));
+      this.$("#duration_tab").append(iteneraryTabViewInstance.render().el);
 
     });
     $("#tab_itenerary").removeClass("d-none");
@@ -70,7 +69,7 @@ var AppView = Backbone.View.extend({
     });
 
 
-
+    globalBound = bounds;
     map.fitBounds(bounds);
 
     console.log("---------App View Rendering Ended-----------");

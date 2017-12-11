@@ -17,7 +17,7 @@
        under the License.
  */
 
-package com.phonegap.first;
+package com.commutethesis.bengerlen;
 
 import android.os.Bundle;
 import org.apache.cordova.*;

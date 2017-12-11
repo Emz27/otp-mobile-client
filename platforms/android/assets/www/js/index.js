@@ -10,6 +10,8 @@
   var appModelInstance;
   var appViewInstance;
   var initialPosition={};
+  var animTimer ={};
+  var globalBound = {};
   initialPosition.lat = 0;
   initialPosition.lng = 0;
 
@@ -25,7 +27,7 @@
     // alert("you can use youre current location as origin");
     this.lat = position.coords.latitude;
     this.lng = position.coords.longitude;
-    $('#originAutocomplete').val("Use Current Position");
+    $('#originAutocomplete').val("Use Current Location");
   }
   var getInitialPositionError = function(error){
     $('#originAutocomplete').val("");
@@ -37,112 +39,144 @@
       zoom: 12,
       mapTypeId: google.maps.MapTypeId.ROADMAP,
       streetViewControl: false,
-      disableDefaultUI: true
+      disableDefaultUI: true,
+      clickableIcons: false
     });
     originAutocomplete =  new google.maps.places.SearchBox(document.getElementById("originAutocomplete"));
     destinationAutocomplete = new google.maps.places.SearchBox(document.getElementById("destinationAutocomplete"));
+    originAutocomplete.addListener('places_changed', function() {
+      tripPlan();
+    });
+    destinationAutocomplete.addListener('places_changed', function() {
+      tripPlan();
+    });
   }
+  function addAnimation(){
+    var item = "<img class='animation_object' src='icons/jeepney.png' width='200px' style='position:absolute;left:100vw;top:30vh'/>"
+    $("#navbar").append(item);
+    var max = 5000;
+    var min = 1000;
 
-  $(document).ready(function(){
-    appModelInstance = new AppModel();
-    appViewInstance = new AppView({model: appModelInstance});
+    $(".animation_object").last().animate({left:"-50vw"},Math.floor(Math.random()*(max-min+1)+min),function(){
+      this.remove();
+    });
+  }
+  function startAnimation(){
 
+    $('#navbar').animate({
+        height: "100vh"
+        //$('#navbar').get(0).scrollHeight
+    }, 1000, function(){
+      $("#navbar").addClass("col-12");
+    });
+    animTimer = setInterval(function(){
+      addAnimation();
+    }, 500);
 
-    $("#searchButton").on("click",function(){
+  }
+  function stopAnimation(isStartAnimation){
+    window.clearTimeout(animTimer);
+    if(isStartAnimation){
+      startAnimation();
+      return;
+    }
+    $(".animation_object").remove();
+    $("#navbar").removeClass("col-12");
+    $('#navbar').animate({
+        height: "80px"
+        //$('#navbar').get(0).scrollHeight
+    }, 1000, function(){
+        $(this).height('auto');
+        google.maps.event.trigger(map, 'resize');
+        map.fitBounds(globalBound);
 
-      $("#originAutocomplete").prop('disabled', true);
-      $("#destinationAutocomplete").prop('disabled', true);
-      $("#searchButton").prop('disabled', true);
-      var originLat,originLng,destinationLat,destinationLng,originLocation,destinationLocation;
-      var origin =null;
-      var destination=null;
-      try{
-        if(($("#originAutocomplete").val() == "Use Current Position") &&( initialPosition.lat != 0 || initialPosition.lng != 0)){
+    });
+  }
+  function tripPlan(){
+    var originLat,originLng,destinationLat,destinationLng,originLocation,destinationLocation;
+    var origin =null;
+    var destination=null;
+    var originInput = $("#originAutocomplete");
+    var destinationInput = $("#destinationAutocomplete");
+    if(!originInput.val() || !destinationInput.val()) return;
+    var originPlace = originAutocomplete.getPlaces();
+    var destinationPlace = destinationAutocomplete.getPlaces();
+    if((originInput.val() == "Use Current Location") &&( initialPosition.lat != 0 || initialPosition.lng != 0)&&(destinationPlace.length != 0)){
+      origin = initialPosition.lat+","+initialPosition.lng;
+      destination = searchBoxGetLocation(destination);
+      stopAnimation(true);
+    }
+    else if(destinationPlace.length != 0 && originPlace.length != 0) {
+      origin = searchBoxGetLocation(originPlace);
+      destination = searchBoxGetLocation(destinationPlace);
+      stopAnimation(true);
+    }
+    else return;
+    // $("#originAutocomplete").prop('disabled', true);
+    // $("#destinationAutocomplete").prop('disabled', true);
+    otp.route(
+      origin,
+      destination,
+      'TRANSIT,WALK'
+    )
+    .then(function(data) {
+      stopAnimation();
+      //router.reset();
+      // $("#originAutocomplete").prop('disabled', false);
+      // $("#destinationAutocomplete").prop('disabled', false);
+      if(data.plan) {
+        results = data.plan.itineraries;
 
-          origin = initialPosition.lat+","+initialPosition.lng;
-          // alert(origin);
-        }
-        else{
-          origin = originAutocomplete.getPlaces();
-          origin = searchBoxGetLocation(origin);
-          // alert("no pos: "+origin);
-        }
-        destination = destinationAutocomplete.getPlaces();
-        destination = searchBoxGetLocation(destination);
-      }
-      catch(err){
-        $("#originAutocomplete").prop('disabled', false);
-        $("#destinationAutocomplete").prop('disabled', false);
-        $("#searchButton").prop('disabled', false);
-        alert("Please Try Again!");
-        return;
-      }
-      if (origin.length == 0 || destination.length == 0) {
-            return;
-      }
-      otp.route(
-        origin,
-        destination,
-        'TRANSIT,WALK'
-      )
-      .then(function(data) {
-        //router.reset();
-        $("#originAutocomplete").prop('disabled', false);
-        $("#destinationAutocomplete").prop('disabled', false);
-        $("#searchButton").prop('disabled', false);
-        if(data.plan) {
-          results = data.plan.itineraries;
+        results.forEach(function(itinerary) {
+          itinerary.fare = 0;
+          itinerary.legs.forEach(function(leg) {
+            leg.points = decodePoints(leg.legGeometry.points);
+            leg.className = leg.mode.toLowerCase();
 
-          results.forEach(function(itinerary) {
-            itinerary.fare = 0;
-            itinerary.legs.forEach(function(leg) {
-              leg.points = decodePoints(leg.legGeometry.points);
-              leg.className = leg.mode.toLowerCase();
-
-              if(leg.mode == 'RAIL') {
-                leg.route = leg.route.replace("-", " ");
-                leg.className = "rail "+leg.route.replace(" ", "").toLowerCase();
-              }
-              if(leg.fare) {
-                itinerary.fare += leg.fare;
-                leg.fare = formatFare(leg.fare);
-              }
-            });
-
-            if(itinerary.fare == 0) {
-              itinerary.fare = undefined;
+            if(leg.mode == 'RAIL') {
+              leg.route = leg.route.replace("-", " ");
+              leg.className = "rail "+leg.route.replace(" ", "").toLowerCase();
             }
-            else {
-              itinerary.fare = formatFare(itinerary.fare, false);
+            if(leg.fare) {
+              itinerary.fare += leg.fare;
+              leg.fare = formatFare(leg.fare);
             }
           });
 
-          console.dir(results);
+          if(itinerary.fare == 0) {
+            itinerary.fare = undefined;
+          }
+          else {
+            itinerary.fare = formatFare(itinerary.fare, false);
+          }
+        });
 
-          appViewInstance.model.set({iteneraries: results});
-          //appViewInstance.render();
-          console.log("appview model set iteneraries successful!");
+        console.dir(results);
 
-        }
-        else {
-          // router.set('results', null);
-          // itinerary.set('current', null);
+        appViewInstance.model.set({iteneraries: results});
+        //appViewInstance.render();
+        console.log("appview model set iteneraries successful!");
 
-        }
-      });
-      // .fin(function() {
-      //   progress.setLoading(false);
-      // });
-
-
-
+      }
+      else {
+        // router.set('results', null);
+        // itinerary.set('current', null);
+      }
     });
+  }
+  $(document).ready(function(){
+
+    var originInput = $("#originAutocomplete");
+    var destinationInput = $("#destinationAutocomplete");
+    // startAnimation();
+    appModelInstance = new AppModel();
+    appViewInstance = new AppView({model: appModelInstance});
   });
 
   document.addEventListener('deviceready', function(){
     // alert("device ready");
     navigator.geolocation.getCurrentPosition(getInitialPositionSuccess.bind(initialPosition), getInitialPositionError.bind(initialPosition),{ enableHighAccuracy: true });
-    StatusBar.hide();
+    // StatusBar.hide();
     console.log('calling push init');
     var push = PushNotification.init({
         "android": {
