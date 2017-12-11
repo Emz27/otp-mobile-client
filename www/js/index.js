@@ -225,13 +225,6 @@
             localStorage.setItem('registrationId', data.registrationId);
             // Post registrationId to your app server as the value has changed
         }
-
-        var parentElement = document.getElementById('registration');
-        var listeningElement = parentElement.querySelector('.waiting');
-        var receivedElement = parentElement.querySelector('.received');
-
-        listeningElement.setAttribute('style', 'display:none;');
-        receivedElement.setAttribute('style', 'display:block;');
     });
 
     push.on('error', function(e) {
@@ -246,7 +239,7 @@
             data.title,           // title
             'Ok'                  // buttonName
         );
-   });
+    });
 
 
 
