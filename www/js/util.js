@@ -3,15 +3,15 @@
  * MIT license found at http://sakay.ph/LICENSE
  */
 
-function searchBoxGetLocation(searchBox){
+function searchBoxGetLocation(place){
 
     var location;
-    searchBox.forEach(function(place) {
-      if (!place.geometry) {
-        return;
-      }
-      location =  place.geometry.location.lat().toFixed(6) + "," + place.geometry.location.lng().toFixed(6);
-    });
+
+    if (!place.geometry) {
+      return;
+    }
+    location =  place.geometry.location.lat().toFixed(6) + "," + place.geometry.location.lng().toFixed(6);
+
     return location;
 }
 //14.591667,121.094006

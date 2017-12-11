@@ -40,19 +40,25 @@
       new google.maps.LatLng(14.325054, 121.115697)
     );
     map = new google.maps.Map(document.getElementById('map'), {
-      bounds: metroManilaBounds,
+      center: {lat: 14.591667, lng: 121.094006},
+      zoom: 12,
       mapTypeId: google.maps.MapTypeId.ROADMAP,
       streetViewControl: false,
       disableDefaultUI: true,
       clickableIcons: false
     });
-    originAutocomplete =  new google.maps.places.SearchBox(document.getElementById("originAutocomplete"),{bounds: metroManilaBounds});
-    destinationAutocomplete = new google.maps.places.SearchBox(document.getElementById("destinationAutocomplete"),{bounds: metroManilaBounds});
-
-    originAutocomplete.addListener('places_changed', function() {
+    originAutocomplete =  new google.maps.places.Autocomplete(document.getElementById("originAutocomplete"),{bounds: metroManilaBounds});
+    destinationAutocomplete = new google.maps.places.Autocomplete(document.getElementById("destinationAutocomplete"),{bounds: metroManilaBounds});
+    originAutocomplete.setBounds(metroManilaBounds);
+    destinationAutocomplete.setBounds(metroManilaBounds);
+    originAutocomplete.setComponentRestrictions(
+          {'country': 'ph'});
+    destinationAutocomplete.setComponentRestrictions(
+          {'country': 'ph'});
+    originAutocomplete.addListener('place_changed', function() {
       tripPlan();
     });
-    destinationAutocomplete.addListener('places_changed', function() {
+    destinationAutocomplete.addListener('place_changed', function() {
       tripPlan();
     });
   }
@@ -110,15 +116,15 @@
     var originInput = $("#originAutocomplete");
     var destinationInput = $("#destinationAutocomplete");
     if(!originInput.val() || !destinationInput.val()) return;
-    var originPlace = originAutocomplete.getPlaces();
-    var destinationPlace = destinationAutocomplete.getPlaces();
-    if((originInput.val() == "Use Current Location") &&( initialPosition.lat != 0 || initialPosition.lng != 0)&&(destinationPlace.length != 0)){
+    var originPlace = originAutocomplete.getPlace();
+    var destinationPlace = destinationAutocomplete.getPlace();
+    if((originInput.val() == "Use Current Location") &&( initialPosition.lat != 0 || initialPosition.lng != 0)&&(destinationPlace.geometry)){
       console.log("hey");
       origin = initialPosition.lat+","+initialPosition.lng;
       destination = searchBoxGetLocation(destinationPlace);
       stopAnimation("start");
     }
-    else if(destinationPlace.length != 0 && originPlace.length != 0) {
+    else if(destinationPlace.geometry && originPlace.geometry) {
       origin = searchBoxGetLocation(originPlace);
       destination = searchBoxGetLocation(destinationPlace);
       stopAnimation("start");
