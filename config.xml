@@ -7,7 +7,7 @@
     <author email="emmanuelbenitez1996@gmail.com" href="#">
         BenGerLen
     </author>
-    <icon src="icon.png" />
+    <icon src="res/icon.png" />
     <content src="index.html" />
     <preference name="DisallowOverscroll" value="true" />
     <preference name="android-minSdkVersion" value="14" />
@@ -15,18 +15,6 @@
     <!-- <feature name="StatusBar">
         <param name="ios-package" onload="true" value="CDVStatusBar" />
     </feature> -->
-    <platform name="android">
-      <icon src="icon.png" />
-    </platform>
-    <platform name="ios">
-      <icon src="icon.png" />
-    </platform>
-    <platform name="wp8">
-        <icon src="icon.png" />
-    </platform>
-    <platform name="windows">
-        <icon src="icon.png" />
-    </platform>
     <access origin="*" />
     <allow-intent href="*" />
     <allow-intent href="http://*/*" />
