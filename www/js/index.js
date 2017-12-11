@@ -12,6 +12,7 @@
   var initialPosition={};
   var animTimer ={};
   var globalBound = {};
+  var navbarScrollHeight = 0;
   initialPosition.lat = 0;
   initialPosition.lng = 0;
 
@@ -82,9 +83,9 @@
     }
     $(".animation_object").remove();
     $("#navbar").removeClass("col-12");
+    console.log($("#navbar")[0].scrollHeight);
     $('#navbar').animate({
-        height: "80px"
-        //$('#navbar').get(0).scrollHeight
+        height: navbarScrollHeight
     }, 1000, function(){
         $(this).height('auto');
         google.maps.event.trigger(map, 'resize');
@@ -120,7 +121,9 @@
       'TRANSIT,WALK'
     )
     .then(function(data) {
-      stopAnimation();
+      setTimeout(function(){
+        stopAnimation();
+      }, 2000);
       //router.reset();
       // $("#originAutocomplete").prop('disabled', false);
       // $("#destinationAutocomplete").prop('disabled', false);
@@ -165,7 +168,8 @@
     });
   }
   $(document).ready(function(){
-
+    navbarScrollHeight = $("#navbar")[0].scrollHeight;
+    $("#navbar").addClass("col-12");
     var originInput = $("#originAutocomplete");
     var destinationInput = $("#destinationAutocomplete");
     // startAnimation();

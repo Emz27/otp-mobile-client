@@ -19,20 +19,19 @@
 </head>
 
 <body class="container-fluid d-flex flex-column p-0 m-0">
-  <nav id="navbar" class="col-12 navbar navbar-light d-flex flex-wrap bg-light">
-    <a class="col-md-1 col-sm-12 d-flex flex-column align-content-center justify-content-center" href="#" style="z-index:20;">
+  <nav id="navbar" class="navbar navbar-light d-flex flex-nowrap bg-light align-items-stretch justify-content-center">
+    <a id="logo" class="d-flex flex-column align-content-center justify-content-center" href="#" style="z-index:20;">
       <div class="text-center"><img src="icons/Logo 1.svg" width="30" height="30" class="" alt=""></div>
       <div class="text-center">WayTo</div>
     </a>
-    <div id="searchBox_container" class="col-md col-sm-12 d-flex flex-wrap justify-content-center">
-      <div class="form-inline col-md col-sm-12">
-        <input placeholder="Origin" id="originAutocomplete" class="form-control col m-2" aria-label="Origin" style="z-index:20;">
+    <div id="searchBox_container" class="flex-nowrap flex-column align-content-stretch" style="z-index:20;">
+      <div class="form-inline col">
+        <input placeholder="Origin" id="originAutocomplete" class="form-control col m-1" aria-label="Origin">
       </div>
-      <div class="form-inline col-md col-sm-12">
-        <input placeholder="Destination" id="destinationAutocomplete" class="form-control col m-2" aria-label="Search" aria-label="Destination" style="z-index:20;">
+      <div class="form-inline col">
+        <input placeholder="Destination" id="destinationAutocomplete" class="form-control col m-1" aria-label="Search" aria-label="Destination">
       </div>
     </div>
-
   </nav>
   <div id="content" class="col d-flex p-0">
 
