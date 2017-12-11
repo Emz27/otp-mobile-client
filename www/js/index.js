@@ -35,16 +35,20 @@
     // alert("error msg: "+ error.message);
   }
   function initMap() {
+    var metroManilaBounds = new google.maps.LatLngBounds(
+      new google.maps.LatLng(14.775268, 120.904939),
+      new google.maps.LatLng(14.325054, 121.115697)
+    );
     map = new google.maps.Map(document.getElementById('map'), {
-      center: {lat: 14.591667, lng: 121.094006},
-      zoom: 12,
+      bounds: metroManilaBounds,
       mapTypeId: google.maps.MapTypeId.ROADMAP,
       streetViewControl: false,
       disableDefaultUI: true,
       clickableIcons: false
     });
-    originAutocomplete =  new google.maps.places.SearchBox(document.getElementById("originAutocomplete"));
-    destinationAutocomplete = new google.maps.places.SearchBox(document.getElementById("destinationAutocomplete"));
+    originAutocomplete =  new google.maps.places.SearchBox(document.getElementById("originAutocomplete"),{bounds: metroManilaBounds});
+    destinationAutocomplete = new google.maps.places.SearchBox(document.getElementById("destinationAutocomplete"),{bounds: metroManilaBounds});
+
     originAutocomplete.addListener('places_changed', function() {
       tripPlan();
     });
