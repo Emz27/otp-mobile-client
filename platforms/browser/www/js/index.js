@@ -12,6 +12,7 @@
   var initialPosition={};
   var animTimer ={};
   var globalBound = {};
+  var navbarScrollHeight = 0;
   initialPosition.lat = 0;
   initialPosition.lng = 0;
 
@@ -34,6 +35,10 @@
     // alert("error msg: "+ error.message);
   }
   function initMap() {
+    var metroManilaBounds = new google.maps.LatLngBounds(
+      new google.maps.LatLng(14.775268, 120.904939),
+      new google.maps.LatLng(14.325054, 121.115697)
+    );
     map = new google.maps.Map(document.getElementById('map'), {
       center: {lat: 14.591667, lng: 121.094006},
       zoom: 12,
@@ -42,9 +47,16 @@
       disableDefaultUI: true,
       clickableIcons: false
     });
-    originAutocomplete =  new google.maps.places.SearchBox(document.getElementById("originAutocomplete"));
-    destinationAutocomplete = new google.maps.places.SearchBox(document.getElementById("destinationAutocomplete"));
+    originAutocomplete =  new google.maps.places.Autocomplete(document.getElementById("originAutocomplete"),{bounds: metroManilaBounds});
+    destinationAutocomplete = new google.maps.places.Autocomplete(document.getElementById("destinationAutocomplete"),{bounds: metroManilaBounds});
+    originAutocomplete.setBounds(metroManilaBounds);
+    destinationAutocomplete.setBounds(metroManilaBounds);
+    originAutocomplete.setComponentRestrictions(
+          {'country': 'ph'});
+    destinationAutocomplete.setComponentRestrictions(
+          {'country': 'ph'});
     originAutocomplete.addListener('places_changed', function() {
+      console.log("hi");
       tripPlan();
     });
     destinationAutocomplete.addListener('places_changed', function() {
@@ -62,7 +74,8 @@
     });
   }
   function startAnimation(){
-
+    // $("#originAutocomplete").prop('disabled', true);
+    // $("#destinationAutocomplete").prop('disabled', true);
     $('#navbar').animate({
         height: "100vh"
         //$('#navbar').get(0).scrollHeight
@@ -74,17 +87,22 @@
     }, 500);
 
   }
-  function stopAnimation(isStartAnimation){
+  function stopAnimation(state){
     window.clearTimeout(animTimer);
-    if(isStartAnimation){
+    if(state == "start"){
       startAnimation();
       return;
     }
     $(".animation_object").remove();
+    // $("#originAutocomplete").prop('disabled', false);
+    // $("#destinationAutocomplete").prop('disabled', false);
+    if(state == "retry"){
+      return;
+    }
     $("#navbar").removeClass("col-12");
+    console.log($("#navbar")[0].scrollHeight);
     $('#navbar').animate({
-        height: "80px"
-        //$('#navbar').get(0).scrollHeight
+        height: navbarScrollHeight
     }, 1000, function(){
         $(this).height('auto');
         google.maps.event.trigger(map, 'resize');
@@ -102,14 +120,15 @@
     var originPlace = originAutocomplete.getPlaces();
     var destinationPlace = destinationAutocomplete.getPlaces();
     if((originInput.val() == "Use Current Location") &&( initialPosition.lat != 0 || initialPosition.lng != 0)&&(destinationPlace.length != 0)){
+      console.log("hey");
       origin = initialPosition.lat+","+initialPosition.lng;
-      destination = searchBoxGetLocation(destination);
-      stopAnimation(true);
+      destination = searchBoxGetLocation(destinationPlace);
+      stopAnimation("start");
     }
     else if(destinationPlace.length != 0 && originPlace.length != 0) {
       origin = searchBoxGetLocation(originPlace);
       destination = searchBoxGetLocation(destinationPlace);
-      stopAnimation(true);
+      stopAnimation("start");
     }
     else return;
     // $("#originAutocomplete").prop('disabled', true);
@@ -120,7 +139,9 @@
       'TRANSIT,WALK'
     )
     .then(function(data) {
-      stopAnimation();
+      setTimeout(function(){
+        stopAnimation();
+      }, 2000);
       //router.reset();
       // $("#originAutocomplete").prop('disabled', false);
       // $("#destinationAutocomplete").prop('disabled', false);
@@ -162,10 +183,14 @@
         // router.set('results', null);
         // itinerary.set('current', null);
       }
-    });
+    }).catch(function (error) {
+       console.dir(error);
+   })
+   .done();
   }
   $(document).ready(function(){
-
+    navbarScrollHeight = $("#navbar")[0].scrollHeight;
+    $("#navbar").addClass("col-12");
     var originInput = $("#originAutocomplete");
     var destinationInput = $("#destinationAutocomplete");
     // startAnimation();

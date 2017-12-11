@@ -8,7 +8,7 @@
   "author": "BenGerLen",
   "icons": [
     {
-      "src": "icon.png",
+      "src": "res/icon.png",
       "type": "image/png",
       "sizes": "undefinedxundefined"
     }

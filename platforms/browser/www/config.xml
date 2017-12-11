@@ -7,8 +7,8 @@
     <author email="emmanuelbenitez1996@gmail.com" href="#">
         BenGerLen
     </author>
+    <icon src="res/icon.png" />
     <content src="index.html" />
-    <icon src="icon.png" />
     <access origin="*" />
     <allow-intent href="*" />
     <allow-intent href="http://*/*" />

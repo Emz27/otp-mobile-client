@@ -10,6 +10,10 @@ body{
   width:100%;
   z-index: 10;
   overflow: hidden;
+  flex-direction: column !important;
+}
+#searchBox_container{
+  flex-direction: column !important;
 }
 .nav-link{
   font-size: .9em;
@@ -36,6 +40,15 @@ and (orientation : portrait) {
   #content{
     flex-direction: column !important;
   }
+  #navbar{
+    flex-direction: column !important;
+  }
+  #searchBox_container{
+    display: initial;
+    flex-direction: column !important;
+    flex-grow: 0 !important;
+
+  }
   #tab_itenerary{
     max-width: 100%;
   }
@@ -57,6 +70,14 @@ and (orientation : portrait) {
 and (orientation : landscape) {
   #content{
     flex-direction: row !important;
+  }
+  #navbar{
+    flex-direction: row !important;
+  }
+  #searchBox_container{
+    display: flex;
+    flex-direction: row !important;
+    flex-grow: 1 !important;
   }
   #tab_itenerary{
     width:300px;
