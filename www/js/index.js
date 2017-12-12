@@ -44,6 +44,8 @@
   var onGetCurrentPositionSuccess = function(position){
     initialPosition.lat = position.coords.latitude;
     initialPosition.lng = position.coords.longitude;
+    originLocation.lat = position.coords.latitude;
+    originLocation.lng = position.coords.longitude;
     $("#user_center").show();
     userMarker.setPosition(new google.maps.LatLng(initialPosition.lat,initialPosition.lng));
   }
