@@ -130,7 +130,7 @@
       }
     });
     map.addListener("click",function(event){
-      if($('#originAutocomplete').prop('disabled') && $('#destinationAutocomplete').prop('disabled'))
+      if($('#originAutocomplete').prop('disabled') && $('#destinationAutocomplete').prop('disabled')) return;
       infoWindow.setPosition(event.latLng);
       infoWindow.open(map);
     });
