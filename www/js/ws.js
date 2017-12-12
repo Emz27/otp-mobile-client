@@ -69,10 +69,18 @@ var otp = function() {
     return Q(reqwest({
       url: API+endpoint,
       type: 'jsonp',
-      data: data
-    }).fail(function (err, msg) {
-      console.log(msg);
-      stopAnimation("retry");
+      data: data,
+      error: function(xmlhttprequest, textstatus, message){
+        stopAnimation();
+        console.log("xmlhttprequest: "+xmlhttprequest);
+        console.log("textstatus: "+textstatus);
+        console.log("message: "+message);
+      }
+    }).fail(function (xmlhttprequest, textstatus, message) {
+      stopAnimation();
+      console.log("xmlhttprequest: "+xmlhttprequest);
+      console.log("textstatus: "+textstatus);
+      console.log("message: "+message);
     }));
     }
 
