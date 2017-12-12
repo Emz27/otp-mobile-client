@@ -128,6 +128,7 @@
       }
     });
     map.addListener("click",function(event){
+      if($('#originAutocomplete').prop('disabled') && $('#destinationAutocomplete').prop('disabled'))
       infoWindow.setPosition(event.latLng);
       infoWindow.open(map);
     });
@@ -137,7 +138,7 @@
   function tripPlan(origin,destination){
     stopAnimation("start");
 
-    
+
     otp.route(
       origin,
       destination,
