@@ -68,9 +68,10 @@ var AppView = Backbone.View.extend({
       });
     });
 
-
     globalBound = bounds;
     map.fitBounds(bounds);
+
+
 
     console.log("---------App View Rendering Ended-----------");
     return this;

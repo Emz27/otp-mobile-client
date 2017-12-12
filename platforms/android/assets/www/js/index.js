@@ -1,6 +1,7 @@
 
 
   var map,originAutocomplete, destinationAutocomplete;
+  var geocoder;
   var results;
   var itenerary = [];
   var snappedCoordinates = [];
@@ -13,6 +14,14 @@
   var animTimer ={};
   var globalBound = {};
   var navbarScrollHeight = 0;
+  var userMarker = {};
+  var originMarker = {};
+  var destinationMarker = {};
+
+  var originLocation = {};
+  var destinationLocation = {};
+  var infoWindow = {};
+  var isPending = false;
   initialPosition.lat = 0;
   initialPosition.lng = 0;
 
@@ -22,23 +31,32 @@
     "#cc0000",// Boston University Red
     "#32CD32"// Lime Green
   ];
-
-
-  var getInitialPositionSuccess = function(position){
-    // alert("you can use youre current location as origin");
-    this.lat = position.coords.latitude;
-    this.lng = position.coords.longitude;
-    $('#originAutocomplete').val("Use Current Location");
+  var onWatchCurrentPositionSuccess = function(position){
+    initialPosition.lat = position.coords.latitude;
+    initialPosition.lng = position.coords.longitude;
+    userMarker.setPosition(new google.maps.LatLng(initialPosition.lat,initialPosition.lng));
+    if(!$("#user_center").is(":visible"))$("#user_center").show();
   }
-  var getInitialPositionError = function(error){
-    $('#originAutocomplete').val("");
-    // alert("error msg: "+ error.message);
+  var onWatchCurrentPositionError = function(error){
+    console.log("watch gps error: "+ error.message);
+    if($("#user_center").is(":visible"))$("#user_center").hide();
+  }
+  var onGetCurrentPositionSuccess = function(position){
+    initialPosition.lat = position.coords.latitude;
+    initialPosition.lng = position.coords.longitude;
+    $("#user_center").show();
+    userMarker.setPosition(new google.maps.LatLng(initialPosition.lat,initialPosition.lng));
+  }
+  var onGetCurrentPositionError = function(error){
+    $("#user_center").hide();
+    console.log("get gps error: "+ error.message);
   }
   function initMap() {
     var metroManilaBounds = new google.maps.LatLngBounds(
       new google.maps.LatLng(14.775268, 120.904939),
       new google.maps.LatLng(14.325054, 121.115697)
     );
+    geocoder = new google.maps.Geocoder;
     map = new google.maps.Map(document.getElementById('map'), {
       center: {lat: 14.591667, lng: 121.094006},
       zoom: 12,
@@ -47,92 +65,79 @@
       disableDefaultUI: true,
       clickableIcons: false
     });
+    var markerImage = new google.maps.MarkerImage('icons/user current location.svg',
+            new google.maps.Size(16, 16),
+            new google.maps.Point(0, 0),
+            new google.maps.Point(8, 8));
+    var originMarkerImage = new google.maps.MarkerImage('icons/origin marker.svg',
+            new google.maps.Size(30, 40),
+            new google.maps.Point(0, 0),
+            new google.maps.Point(15, 32));
+    var destinationMarkerImage = new google.maps.MarkerImage('icons/destination marker.svg',
+            new google.maps.Size(40, 40),
+            new google.maps.Point(0, 0),
+            new google.maps.Point(13, 32));
+
+    userMarker = new google.maps.Marker({
+      icon: markerImage,
+      zIndex: 6000,
+      map: map
+    });
+    originMarker = new google.maps.Marker({
+      icon: originMarkerImage,
+      title:"Origin",
+      zIndex: 5000,
+      map: map
+    });
+    destinationMarker = new google.maps.Marker({
+      icon: destinationMarkerImage,
+      title:"Destination",
+      zIndex: 5000,
+      map: map
+    });
     originAutocomplete =  new google.maps.places.Autocomplete(document.getElementById("originAutocomplete"),{bounds: metroManilaBounds});
     destinationAutocomplete = new google.maps.places.Autocomplete(document.getElementById("destinationAutocomplete"),{bounds: metroManilaBounds});
-    originAutocomplete.setBounds(metroManilaBounds);
-    destinationAutocomplete.setBounds(metroManilaBounds);
-    originAutocomplete.setComponentRestrictions(
-          {'country': 'ph'});
-    destinationAutocomplete.setComponentRestrictions(
-          {'country': 'ph'});
-    originAutocomplete.addListener('places_changed', function() {
-      console.log("hi");
-      tripPlan();
+    originAutocomplete.setComponentRestrictions({'country': 'ph'});
+    destinationAutocomplete.setComponentRestrictions({'country': 'ph'});
+    originAutocomplete.addListener('place_changed', function() {
+      if(!autocompleteGeocode()) return;
+      tripPlan(formatLocation(originLocation.lat,originLocation.lng),formatLocation(destinationLocation.lat,destinationLocation.lng));
     });
-    destinationAutocomplete.addListener('places_changed', function() {
-      tripPlan();
+    destinationAutocomplete.addListener('place_changed', function() {
+      if(!autocompleteGeocode()) return;
+      tripPlan(formatLocation(originLocation.lat,originLocation.lng),formatLocation(destinationLocation.lat,destinationLocation.lng));
+    });
+    var infoWindowContent = "<a class='set_origin' href='#'><img src='icons/origin marker.svg'/></a> | <a class='set_destination' href='#'><img src='icons/destination marker.svg'/></a> |";
+    infoWindow = new google.maps.InfoWindow({
+      content: infoWindowContent
+    });
+    infoWindow.addListener("domready",function(){
+      console.log("dom ready!");
+      if(!$.hasData($(".set_origin")[0])){
+        $(".set_origin").click(function(){
+          setOrigin(infoWindow.getPosition().lat(),infoWindow.getPosition().lng());
+          infoWindow.close();
+        });
+      }
+      if(!$.hasData($(".set_destination")[0])){
+        $(".set_destination").click(function(){
+          setDestination(infoWindow.getPosition().lat(),infoWindow.getPosition().lng());
+          $(".set_destination").unbind();
+          infoWindow.close();
+        });
+      }
+    });
+    map.addListener("click",function(event){
+      infoWindow.setPosition(event.latLng);
+      infoWindow.open(map);
     });
   }
-  function addAnimation(){
-    var item = "<img class='animation_object' src='icons/jeepney.png' width='200px' style='position:absolute;left:100vw;top:30vh'/>"
-    $("#navbar").append(item);
-    var max = 5000;
-    var min = 1000;
 
-    $(".animation_object").last().animate({left:"-50vw"},Math.floor(Math.random()*(max-min+1)+min),function(){
-      this.remove();
-    });
-  }
-  function startAnimation(){
-    // $("#originAutocomplete").prop('disabled', true);
-    // $("#destinationAutocomplete").prop('disabled', true);
-    $('#navbar').animate({
-        height: "100vh"
-        //$('#navbar').get(0).scrollHeight
-    }, 1000, function(){
-      $("#navbar").addClass("col-12");
-    });
-    animTimer = setInterval(function(){
-      addAnimation();
-    }, 500);
 
-  }
-  function stopAnimation(state){
-    window.clearTimeout(animTimer);
-    if(state == "start"){
-      startAnimation();
-      return;
-    }
-    $(".animation_object").remove();
-    // $("#originAutocomplete").prop('disabled', false);
-    // $("#destinationAutocomplete").prop('disabled', false);
-    if(state == "retry"){
-      return;
-    }
-    $("#navbar").removeClass("col-12");
-    console.log($("#navbar")[0].scrollHeight);
-    $('#navbar').animate({
-        height: navbarScrollHeight
-    }, 1000, function(){
-        $(this).height('auto');
-        google.maps.event.trigger(map, 'resize');
-        map.fitBounds(globalBound);
+  function tripPlan(origin,destination){
+    stopAnimation("start");
 
-    });
-  }
-  function tripPlan(){
-    var originLat,originLng,destinationLat,destinationLng,originLocation,destinationLocation;
-    var origin =null;
-    var destination=null;
-    var originInput = $("#originAutocomplete");
-    var destinationInput = $("#destinationAutocomplete");
-    if(!originInput.val() || !destinationInput.val()) return;
-    var originPlace = originAutocomplete.getPlaces();
-    var destinationPlace = destinationAutocomplete.getPlaces();
-    if((originInput.val() == "Use Current Location") &&( initialPosition.lat != 0 || initialPosition.lng != 0)&&(destinationPlace.length != 0)){
-      console.log("hey");
-      origin = initialPosition.lat+","+initialPosition.lng;
-      destination = searchBoxGetLocation(destinationPlace);
-      stopAnimation("start");
-    }
-    else if(destinationPlace.length != 0 && originPlace.length != 0) {
-      origin = searchBoxGetLocation(originPlace);
-      destination = searchBoxGetLocation(destinationPlace);
-      stopAnimation("start");
-    }
-    else return;
-    // $("#originAutocomplete").prop('disabled', true);
-    // $("#destinationAutocomplete").prop('disabled', true);
+    
     otp.route(
       origin,
       destination,
@@ -189,10 +194,15 @@
    .done();
   }
   $(document).ready(function(){
+    navigator.geolocation.watchPosition(onWatchCurrentPositionSuccess, onWatchCurrentPositionError,{ enableHighAccuracy: true });
+    navigator.geolocation.getCurrentPosition(onGetCurrentPositionSuccess, onGetCurrentPositionError,{ enableHighAccuracy: true });
     navbarScrollHeight = $("#navbar")[0].scrollHeight;
-    $("#navbar").addClass("col-12");
     var originInput = $("#originAutocomplete");
     var destinationInput = $("#destinationAutocomplete");
+    $("#user_center").click(function(){
+      map.setCenter(userMarker.getPosition());
+      map.setZoom(16);
+    });
     // startAnimation();
     appModelInstance = new AppModel();
     appViewInstance = new AppView({model: appModelInstance});
@@ -200,7 +210,8 @@
 
   document.addEventListener('deviceready', function(){
     // alert("device ready");
-    navigator.geolocation.getCurrentPosition(getInitialPositionSuccess.bind(initialPosition), getInitialPositionError.bind(initialPosition),{ enableHighAccuracy: true });
+    // navigator.geolocation.watchPosition(onWatchCurrentPositionSuccess, onWatchCurrentPositionError,{ enableHighAccuracy: true });
+    // navigator.geolocation.getCurrentPosition(onGetCurrentPositionSuccess, onGetCurrentPositionError,{ enableHighAccuracy: true });
     // StatusBar.hide();
     console.log('calling push init');
     var push = PushNotification.init({
@@ -226,13 +237,6 @@
             localStorage.setItem('registrationId', data.registrationId);
             // Post registrationId to your app server as the value has changed
         }
-
-        var parentElement = document.getElementById('registration');
-        var listeningElement = parentElement.querySelector('.waiting');
-        var receivedElement = parentElement.querySelector('.received');
-
-        listeningElement.setAttribute('style', 'display:none;');
-        receivedElement.setAttribute('style', 'display:block;');
     });
 
     push.on('error', function(e) {
@@ -247,7 +251,7 @@
             data.title,           // title
             'Ok'                  // buttonName
         );
-   });
+    });
 
 
 

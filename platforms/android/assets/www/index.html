@@ -14,6 +14,8 @@
     <link rel="logo icon" href="icons/Logo 1.svg" />
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/alertify.min.css">
+    <link rel="stylesheet" href="css/alertify_themes/bootstrap.min.css">
     <!-- Custom Styles -->
     <link rel="stylesheet" href="css/index.css">
 </head>
@@ -48,12 +50,16 @@
       </div>
     </div>
     <div class="d-flex flex-column align-items-stretch col p-0">
+
       <div class="position-absolute d-flex align-items-stretch col p-0" style="height:100%;">
         <div id="map" class="col p-0">
         </div>
       </div>
       <div id="monitor" class="position-absolute col p-0" style="height:auto;">
         <!-- ......... -->
+      </div>
+      <div class="position-absolute m-4" style="right:0px;bottom:0px">
+        <img id="user_center" class= "align-self-end " src="icons/user center.svg"/>
       </div>
     </div>
     <div id="itenerary_list_portrait" class="d-none tab-content">
@@ -188,6 +194,7 @@
     <script src="js/jquery-3.2.1.min.js"></script>
     <script src="js/popper.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
+    <script src="js/alertify.min.js"></script>
 
 
     <!-- Custom and plugin javascript -->

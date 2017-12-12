@@ -22,25 +22,6 @@ var MonitorView = Backbone.View.extend({
     this.remainingCheckpointMarkers = [];//
     this.lastCheckpointMarker = {};//
     this.currentPositionMarker = {};
-
-
-
-
-    this.marker = new google.maps.Marker({
-      position: new google.maps.LatLng(0, 0),
-      // icon:{
-      //   path: google.maps.SymbolPath.CIRCLE,
-      //   scale: 1,
-      //   fillColor: 'blue',
-      //   fillOpacity: 1,
-      //   strokeColor: 'white',
-      //   strokeWeight: 5,
-      // },
-      // optimized: false,
-      // zIndex:99999999,
-      map: map
-    });
-
     // var this1 = this;
     // var onWatchPositionSuccess = this.onWatchPositionSuccess.bind(this);
     //
@@ -141,7 +122,6 @@ var MonitorView = Backbone.View.extend({
         // 'Timestamp: '          + position.timestamp    );
 
         this.currentPosition = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
-        this.marker.setPosition(this.currentPosition);
 
       // var percent = /this.totalPathDistance
       /*
@@ -164,7 +144,6 @@ var MonitorView = Backbone.View.extend({
   onWatchPositionSuccess: function(position) {
       console.log("================");
       this.currentPosition = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
-      this.marker.setPosition(this.currentPosition);
       // array.findIndex(function(currentValue, index, arr), thisValue)
       var nearCheckpoint = this.remainingCheckpoints.findIndex(function(checkpoint){
                     return google.maps.geometry.spherical.computeDistanceBetween(this.currentPosition, checkpoint) <= 120;
@@ -277,7 +256,6 @@ var MonitorView = Backbone.View.extend({
     $("#destinationAutocomplete").prop('disabled', false);
     this.unbind();
     this.remove();
-    this.marker.setMap(null);
     this.stopWatchPosition();
   }
 });
