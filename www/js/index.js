@@ -195,6 +195,7 @@
    .done();
   }
   $(document).ready(function(){
+    $("#user_center").hide();
     navigator.geolocation.watchPosition(onWatchCurrentPositionSuccess, onWatchCurrentPositionError,{ enableHighAccuracy: true });
     navigator.geolocation.getCurrentPosition(onGetCurrentPositionSuccess, onGetCurrentPositionError,{ enableHighAccuracy: true });
     navbarScrollHeight = $("#navbar")[0].scrollHeight;
