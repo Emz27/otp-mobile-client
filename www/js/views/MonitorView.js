@@ -145,6 +145,7 @@ var MonitorView = Backbone.View.extend({
   onWatchPositionSuccess: function(position) {
       console.log("================");
       this.currentPosition = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
+
       // array.findIndex(function(currentValue, index, arr), thisValue)
       var nearCheckpoint = this.remainingCheckpoints.findIndex(function(checkpoint){
                     return google.maps.geometry.spherical.computeDistanceBetween(this.currentPosition, checkpoint) <= 30;
@@ -244,6 +245,15 @@ var MonitorView = Backbone.View.extend({
         console.log("progress : "+ progress+"%");
         this.$(".progress-bar").css("width",progress+"%");
       }
+      cordova.plugins.backgroundMode.configure({
+        title: ""+progress+"%",
+        text: "Trip Progress"
+        // icon: 'icon' // this will look for icon.png in platforms/android/res/drawable|mipmap
+        // color: String // hex format like 'F14F4D'
+        // resume: Boolean,
+        // hidden: Boolean,
+        // bigText: Boolean
+      });
       console.log("================");
   },
   onWatchPositionError: function(error){

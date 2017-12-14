@@ -180,6 +180,7 @@
     .then(function(data) {
       setTimeout(function(){
         stopAnimation();
+        infoWindow.close();
       }, 2000);
       //router.reset();
       // $("#originAutocomplete").prop('disabled', false);
@@ -255,6 +256,17 @@
     // navigator.geolocation.getCurrentPosition(onGetCurrentPositionSuccess, onGetCurrentPositionError,{ enableHighAccuracy: true });
     // StatusBar.hide();
     cordova.plugins.backgroundMode.enable();
+
+    cordova.plugins.backgroundMode.setDefaults({
+        title: "",
+        text: "WayTo is running on background"
+        // icon: 'icon' // this will look for icon.png in platforms/android/res/drawable|mipmap
+        // color: String // hex format like 'F14F4D'
+        // resume: Boolean,
+        // hidden: Boolean,
+        // bigText: Boolean
+    });
+
     console.log('calling push init');
     var push = PushNotification.init({
         "android": {
