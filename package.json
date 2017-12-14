@@ -23,12 +23,14 @@
       "cordova-plugin-console": {},
       "phonegap-plugin-push": {
         "FCM_VERSION": "11.0.1"
-      }
+      },
+      "cordova-plugin-background-mode": {}
     }
   },
   "dependencies": {
     "cordova-android": "^6.3.0",
     "cordova-browser": "~5.0.1",
+    "cordova-plugin-background-mode": "^0.7.2",
     "cordova-plugin-battery-status": "~1.2.4",
     "cordova-plugin-camera": "~2.4.1",
     "cordova-plugin-console": "^1.1.0",

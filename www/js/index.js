@@ -254,6 +254,7 @@
     // navigator.geolocation.watchPosition(onWatchCurrentPositionSuccess, onWatchCurrentPositionError,{ enableHighAccuracy: true });
     // navigator.geolocation.getCurrentPosition(onGetCurrentPositionSuccess, onGetCurrentPositionError,{ enableHighAccuracy: true });
     // StatusBar.hide();
+    cordova.plugins.backgroundMode.enable();
     console.log('calling push init');
     var push = PushNotification.init({
         "android": {

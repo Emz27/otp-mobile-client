@@ -48,6 +48,9 @@
     },
     "phonegap-plugin-push": {
       "PACKAGE_NAME": "com.phonegap.first"
+    },
+    "cordova-plugin-background-mode": {
+      "PACKAGE_NAME": "com.commutethesis.bengerlen"
     }
   },
   "dependent_plugins": {

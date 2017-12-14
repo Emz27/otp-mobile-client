@@ -147,7 +147,7 @@ var MonitorView = Backbone.View.extend({
       this.currentPosition = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
       // array.findIndex(function(currentValue, index, arr), thisValue)
       var nearCheckpoint = this.remainingCheckpoints.findIndex(function(checkpoint){
-                    return google.maps.geometry.spherical.computeDistanceBetween(this.currentPosition, checkpoint) <= 120;
+                    return google.maps.geometry.spherical.computeDistanceBetween(this.currentPosition, checkpoint) <= 30;
                   }.bind(this));
 
       if(nearCheckpoint != -1){
@@ -155,7 +155,7 @@ var MonitorView = Backbone.View.extend({
         var currentCheckpoint = this.remainingCheckpoints[nearCheckpoint];
         // array.indexOf(item, start)
         var stopCheckpoint = this.remainingStops.findIndex(function(stop){
-              return google.maps.geometry.spherical.computeDistanceBetween(currentCheckpoint, stop) <= 120;
+              return google.maps.geometry.spherical.computeDistanceBetween(currentCheckpoint, stop) <= 30;
             });
         if(stopCheckpoint != -1){
           // notification to user
@@ -165,32 +165,36 @@ var MonitorView = Backbone.View.extend({
               StatusBar.backgroundColorByHexString("#333");
           }
           if(this.remainingStops.length == 1){
+            navigator.vibrate([1000, 500, 1000, 1000, 2000]);
             navigator.notification.alert(
-                "You are now approaching your Destination!\n\n giff me something",         // message
+                "You have reached your Destination.",         // message
                 null,                 // callback
                 "Stop Alert",           // title
                 'Ok'                  // buttonName
             );
           }
           else if(this.remainingStopViews[stopCheckpoint].model.get("conveyance").primary == "WALK"){
+            navigator.vibrate([1000, 500, 1000, 500, 1000]);
             navigator.notification.alert(
-                "You are now approaching your stop!\n\n",         // message
+                "You have reached your stop\n\n",         // message
                 null,                 // callback
                 "Stop Alert",           // title
                 'Ok'                  // buttonName
             );
           }
           else if(this.remainingStopViews[stopCheckpoint].model.get("conveyance").primary == "TRAIN"){
+            navigator.vibrate([1000, 500, 1000, 500, 1000]);
             navigator.notification.alert(
-                "You are now approaching your stop!\nPlease prepare to leave the train",         // message
+                "You have reached your stop!\nPlease leave the train carefully",         // message
                 null,                 // callback
                 "Stop Alert",           // title
                 'Ok'                  // buttonName
             );
           }
           else {
+            navigator.vibrate([1000, 500, 1000, 500, 1000]);
               navigator.notification.alert(
-                  "You are now approaching your stop!\n\nPlease prepare for your next trip and dont forget to pay your P"+ fare +" fare.",
+                  "You have reached your stop!\n\nPlease prepare for your next trip.",
                   null,                 // callback
                   "Stop Alert",           // title
                   'Ok'                  // buttonName

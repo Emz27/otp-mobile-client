@@ -19,6 +19,22 @@
             {
               "xml": "<feature name=\"PushNotification\"><param name=\"android-package\" value=\"com.adobe.phonegap.push.PushPlugin\" /></feature>",
               "count": 1
+            },
+            {
+              "xml": "<feature name=\"Device\"><param name=\"android-package\" value=\"org.apache.cordova.device.Device\" /></feature>",
+              "count": 1
+            },
+            {
+              "xml": "<feature name=\"BackgroundMode\"><param name=\"android-package\" value=\"de.appplant.cordova.plugin.background.BackgroundMode\" /></feature>",
+              "count": 1
+            },
+            {
+              "xml": "<preference name=\"KeepRunning\" value=\"true\" />",
+              "count": 1
+            },
+            {
+              "xml": "<preference name=\"AndroidLaunchMode\" value=\"singleInstance\" />",
+              "count": 1
             }
           ]
         }
@@ -40,7 +56,7 @@
             },
             {
               "xml": "<uses-permission android:name=\"android.permission.WAKE_LOCK\" />",
-              "count": 1
+              "count": 2
             }
           ],
           "/manifest/application": [
@@ -63,6 +79,10 @@
             {
               "xml": "<service android:name=\"com.adobe.phonegap.push.PushInstanceIDListenerService\"><intent-filter><action android:name=\"com.google.firebase.INSTANCE_ID_EVENT\" /></intent-filter></service>",
               "count": 1
+            },
+            {
+              "xml": "<service android:name=\"de.appplant.cordova.plugin.background.ForegroundService\" />",
+              "count": 1
             }
           ]
         }
@@ -82,6 +102,12 @@
     "phonegap-plugin-push": {
       "FCM_VERSION": "11.0.1",
       "PACKAGE_NAME": "com.phonegap.first"
+    },
+    "cordova-plugin-device": {
+      "PACKAGE_NAME": "com.commutethesis.bengerlen"
+    },
+    "cordova-plugin-background-mode": {
+      "PACKAGE_NAME": "com.commutethesis.bengerlen"
     }
   },
   "dependent_plugins": {},
@@ -110,12 +136,31 @@
       "clobbers": [
         "PushNotification"
       ]
+    },
+    {
+      "id": "cordova-plugin-device.device",
+      "file": "plugins/cordova-plugin-device/www/device.js",
+      "pluginId": "cordova-plugin-device",
+      "clobbers": [
+        "device"
+      ]
+    },
+    {
+      "id": "cordova-plugin-background-mode.BackgroundMode",
+      "file": "plugins/cordova-plugin-background-mode/www/background-mode.js",
+      "pluginId": "cordova-plugin-background-mode",
+      "clobbers": [
+        "cordova.plugins.backgroundMode",
+        "plugin.backgroundMode"
+      ]
     }
   ],
   "plugin_metadata": {
     "cordova-plugin-statusbar": "2.3.0",
     "cordova-plugin-vibration": "2.1.5",
     "cordova-plugin-console": "1.1.0",
-    "phonegap-plugin-push": "2.1.2"
+    "phonegap-plugin-push": "2.1.2",
+    "cordova-plugin-device": "1.1.6",
+    "cordova-plugin-background-mode": "0.7.2"
   }
 }

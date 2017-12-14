@@ -35,6 +35,7 @@
     initialPosition.lat = position.coords.latitude;
     initialPosition.lng = position.coords.longitude;
     userMarker.setPosition(new google.maps.LatLng(initialPosition.lat,initialPosition.lng));
+    setOrigin(position.coords.latitude, position.coords.longitude);
     if(!$("#user_center").is(":visible"))$("#user_center").show();
   }
   var onWatchCurrentPositionError = function(error){
@@ -42,14 +43,38 @@
     if($("#user_center").is(":visible"))$("#user_center").hide();
   }
   var onGetCurrentPositionSuccess = function(position){
+    if(originLocation.lat)return;
     initialPosition.lat = position.coords.latitude;
     initialPosition.lng = position.coords.longitude;
+    originLocation.lat = position.coords.latitude;
+    originLocation.lng = position.coords.longitude;
     $("#user_center").show();
     userMarker.setPosition(new google.maps.LatLng(initialPosition.lat,initialPosition.lng));
   }
   var onGetCurrentPositionError = function(error){
     $("#user_center").hide();
     console.log("get gps error: "+ error.message);
+  }
+
+  function isMonitoring(){
+    if($('#originAutocomplete').prop('disabled') && $('#destinationAutocomplete').prop('disabled')) return true;
+    return false;
+  }
+  function clearOrigin(){
+    if(isMonitoring())return;
+    $("#originAutocomplete").val("");
+    delete originLocation.lat;
+    delete originLocation.lng;
+    originMarker.setPosition(new google.maps.LatLng(0,0));
+    appViewInstance.clean();
+  }
+  function clearDestination(){
+    if(isMonitoring())return;
+    $("#destinationAutocomplete").val("");
+    delete destinationLocation.lat;
+    delete destinationLocation.lng;
+    destinationMarker.setPosition(new google.maps.LatLng(0,0));
+    appViewInstance.clean();
   }
   function initMap() {
     var metroManilaBounds = new google.maps.LatLngBounds(
@@ -95,6 +120,14 @@
       zIndex: 5000,
       map: map
     });
+    originMarker.addListener("click",function(){
+      if(isMonitoring()) return;
+      clearOrigin();
+    });
+    destinationMarker.addListener("click",function(){
+      if(isMonitoring()) return;
+      clearDestination();
+    });
     originAutocomplete =  new google.maps.places.Autocomplete(document.getElementById("originAutocomplete"),{bounds: metroManilaBounds});
     destinationAutocomplete = new google.maps.places.Autocomplete(document.getElementById("destinationAutocomplete"),{bounds: metroManilaBounds});
     originAutocomplete.setComponentRestrictions({'country': 'ph'});
@@ -128,6 +161,7 @@
       }
     });
     map.addListener("click",function(event){
+      if(isMonitoring()) return;
       infoWindow.setPosition(event.latLng);
       infoWindow.open(map);
     });
@@ -137,7 +171,7 @@
   function tripPlan(origin,destination){
     stopAnimation("start");
 
-    
+
     otp.route(
       origin,
       destination,
@@ -194,6 +228,7 @@
    .done();
   }
   $(document).ready(function(){
+    $("#user_center").hide();
     navigator.geolocation.watchPosition(onWatchCurrentPositionSuccess, onWatchCurrentPositionError,{ enableHighAccuracy: true });
     navigator.geolocation.getCurrentPosition(onGetCurrentPositionSuccess, onGetCurrentPositionError,{ enableHighAccuracy: true });
     navbarScrollHeight = $("#navbar")[0].scrollHeight;
@@ -202,6 +237,12 @@
     $("#user_center").click(function(){
       map.setCenter(userMarker.getPosition());
       map.setZoom(16);
+    });
+    $("#clear_origin").click(function(){
+      clearOrigin();
+    });
+    $("#clear_destination").click(function(){
+      clearDestination();
     });
     // startAnimation();
     appModelInstance = new AppModel();
