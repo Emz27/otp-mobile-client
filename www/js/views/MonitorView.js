@@ -24,7 +24,7 @@ var MonitorView = Backbone.View.extend({
     this.currentPositionMarker = {};
     // var this1 = this;
     // var onWatchPositionSuccess = this.onWatchPositionSuccess.bind(this);
-    //
+    
     // google.maps.event.addListener(map, 'click', function(event) {
     //    // placeMarker(event.latLng);
     //    var position={};
@@ -34,14 +34,14 @@ var MonitorView = Backbone.View.extend({
     //    // // console.dir(event.latLng);
     //    // alert(position);
     //    onWatchPositionSuccess(position);
-    //
+    
     // });
   },
 
   render: function () {
     $("#originAutocomplete").prop('disabled', true);
     $("#destinationAutocomplete").prop('disabled', true);
-    this.legViews.pop();
+    //this.legViews.pop();
     // console.log("testtestAAA"+this.legViews[0].model.get("points")[1].lng);
     this.startPoint = new google.maps.LatLng(this.legViews[0].model.get("points")[0].lat,this.legViews[0].model.get("points")[0].lng);
     this.lastCheckpoint = new google.maps.LatLng(this.legViews[0].model.get("points")[0].lat,this.legViews[0].model.get("points")[0].lng);
@@ -53,14 +53,15 @@ var MonitorView = Backbone.View.extend({
     var stopViews = this.remainingStopViews;
 
     this.legViews.forEach(function(item,i){
-      if(i==0)return;
+      if(i==(this.legViews.length - 1) )return;
       totalDistance+= item.model.get("distance");
       points.push.apply(points,item.model.get("points"));
+      console.dir(item.model.get("points"));
       var stop = item.model.get("points")[item.model.get("points").length-1];
       stops.push(new google.maps.LatLng(stop.lat,stop.lng));
       stopViews.push(item);
 
-    })
+    }.bind(this));
     points.shift();
     this.remainingStops = stops;
     this.remainingStopViews = stopViews;

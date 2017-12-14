@@ -28,11 +28,19 @@
     </a>
     <div id="searchBox_container" class="flex-nowrap flex-column align-content-stretch" style="z-index:20;">
       <div class="form-inline col">
-        <input placeholder="Origin" id="originAutocomplete" class="form-control col m-1" aria-label="Origin">
+          <div class="input-group col m-1">
+            <input id="originAutocomplete" type="text" class="form-control" placeholder="Origin" aria-label="Origin" aria-describedby="clear_origin">
+            <span class="input-group-addon" id="clear_origin">&times;</span>
+          </div>
       </div>
       <div class="form-inline col">
-        <input placeholder="Destination" id="destinationAutocomplete" class="form-control col m-1" aria-label="Search" aria-label="Destination">
+          <div class="input-group col m-1">
+            <input id="destinationAutocomplete" type="text" class="form-control" placeholder="Destination" aria-label="Username" aria-describedby="clear_destination">
+            <span class="input-group-addon" id="clear_destination">&times;</span>
+          </div>
       </div>
+
+      
     </div>
   </nav>
   <div id="content" class="col d-flex p-0">
