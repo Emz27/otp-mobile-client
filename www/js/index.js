@@ -37,11 +37,11 @@
     userMarker.setPosition(new google.maps.LatLng(initialPosition.lat,initialPosition.lng));
     setOrigin(position.coords.latitude, position.coords.longitude);
     if(!$("#user_center").is(":visible"))$("#user_center").show();
-  }
+  };
   var onWatchCurrentPositionError = function(error){
     console.log("watch gps error: "+ error.message);
     if($("#user_center").is(":visible"))$("#user_center").hide();
-  }
+  };
   var onGetCurrentPositionSuccess = function(position){
     if(originLocation.lat)return;
     initialPosition.lat = position.coords.latitude;
@@ -50,11 +50,11 @@
     originLocation.lng = position.coords.longitude;
     $("#user_center").show();
     userMarker.setPosition(new google.maps.LatLng(initialPosition.lat,initialPosition.lng));
-  }
+  };
   var onGetCurrentPositionError = function(error){
     $("#user_center").hide();
     console.log("get gps error: "+ error.message);
-  }
+  };
 
   function isMonitoring(){
     if($('#originAutocomplete').prop('disabled') && $('#destinationAutocomplete').prop('disabled')) return true;
@@ -81,7 +81,7 @@
       new google.maps.LatLng(14.775268, 120.904939),
       new google.maps.LatLng(14.325054, 121.115697)
     );
-    geocoder = new google.maps.Geocoder;
+    geocoder = new google.maps.Geocoder();
     map = new google.maps.Map(document.getElementById('map'), {
       center: {lat: 14.591667, lng: 121.094006},
       zoom: 12,

@@ -46,9 +46,9 @@ var AppView = Backbone.View.extend({
       tabNumberChildViews.push(portrait);
       tabNumberChildViews.push(landscape);
 
-      for(var i = 0; i < view.childViews.length; i++){
-        portrait.childViews[i].model = view.childViews[i].model;
-        landscape.childViews[i].model = view.childViews[i].model;
+      for(var j = 0; j < view.childViews.length; j++){
+        portrait.childViews[j].model = view.childViews[j].model;
+        landscape.childViews[j].model = view.childViews[j].model;
       }
 
       this.$("#itenerary_list_portrait").append(portrait.$(".tab-pane"));
@@ -67,7 +67,8 @@ var AppView = Backbone.View.extend({
         }
       });
     });
-
+    bounds.extend(new google.maps.LatLng(originLocation.lat,originLocation.lng));
+    bounds.extend(new google.maps.LatLng(destinationLocation.lat,destinationLocation.lng));
     globalBound = bounds;
     map.fitBounds(bounds);
 
@@ -90,13 +91,13 @@ var AppView = Backbone.View.extend({
         childView.close();
 
     });
-
     this.iteneraryTabChildViews = [];
     this.tabNumberChildViews = [];
-
     this.$("#duration_tab").html("");
     this.$("#itenerary_list_portrait").html("");
     this.$("#itenerary_list_landscape").html("");
-
+    $("#tab_itenerary").addClass("d-none");
+    $("#tab_itenerary").removeClass("d-flex");
+    $("#itenerary_list_portrait").addClass("d-none");
   }
 });

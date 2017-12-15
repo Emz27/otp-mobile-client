@@ -18,13 +18,14 @@ var MonitorView = Backbone.View.extend({
     this.remainingStops = [];
     this.remainingStopViews = [];
     this.currentPosition = {};
+    this.progress = 0;
 
     this.remainingCheckpointMarkers = [];//
     this.lastCheckpointMarker = {};//
     this.currentPositionMarker = {};
     // var this1 = this;
     // var onWatchPositionSuccess = this.onWatchPositionSuccess.bind(this);
-    
+
     // google.maps.event.addListener(map, 'click', function(event) {
     //    // placeMarker(event.latLng);
     //    var position={};
@@ -34,7 +35,7 @@ var MonitorView = Backbone.View.extend({
     //    // // console.dir(event.latLng);
     //    // alert(position);
     //    onWatchPositionSuccess(position);
-    
+
     // });
   },
 
@@ -228,10 +229,10 @@ var MonitorView = Backbone.View.extend({
         var num = this.points.indexOf(this.remainingCheckpoints[nearCheckpoint]);
         console.log("- "+removedCheckpoints.length+" removed from list of remaining points");
         console.log("-checkpoint number " +(num)+1+"/"+this.points.length);
-        var progress = Math.floor((this.distanceTravelled/this.totalPathDistance) * 100);
+        this.progress = Math.floor((this.distanceTravelled/this.totalPathDistance) * 100);
         console.log("-distance travelled: "+ this.distanceTravelled);
-        console.log("-progress: "+ progress+"%");
-        this.$(".progress-bar").css("width",progress+"%");
+        console.log("-progress: "+ this.progress+"%");
+        this.$(".progress-bar").css("width",this.progress+"%");
       }
       else{
         var maxCheckpointDistance = google.maps.geometry.spherical.computeDistanceBetween(this.lastCheckpoint, this.remainingCheckpoints[0]);
@@ -240,13 +241,13 @@ var MonitorView = Backbone.View.extend({
         console.log("maxCheckpointDistance: "+ maxCheckpointDistance);
         console.log("currentDistanceToCheckpoint: "+ currentDistanceToCheckpoint);
         console.log("distanceTravelled : "+ this.distanceTravelled);
-        var progress = Math.floor(((this.distanceTravelled + maxCheckpointDistance - currentDistanceToCheckpoint)/this.totalPathDistance)*100);
-        if (progress < 0) progress = 0;
-        console.log("progress : "+ progress+"%");
-        this.$(".progress-bar").css("width",progress+"%");
+        this.progress = Math.floor(((this.distanceTravelled + maxCheckpointDistance - currentDistanceToCheckpoint)/this.totalPathDistance)*100);
+        if (this.progress < 0) this.progress = 0;
+        console.log("progress : "+ this.progress+"%");
+        this.$(".progress-bar").css("width",this.progress+"%");
       }
       cordova.plugins.backgroundMode.configure({
-        title: ""+progress+"%",
+        title: ""+this.progress+"%",
         text: "Trip Progress"
         // icon: 'icon' // this will look for icon.png in platforms/android/res/drawable|mipmap
         // color: String // hex format like 'F14F4D'
