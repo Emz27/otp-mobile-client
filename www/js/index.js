@@ -35,7 +35,6 @@
     initialPosition.lat = position.coords.latitude;
     initialPosition.lng = position.coords.longitude;
     userMarker.setPosition(new google.maps.LatLng(initialPosition.lat,initialPosition.lng));
-    setOrigin(position.coords.latitude, position.coords.longitude);
     if(!$("#user_center").is(":visible"))$("#user_center").show();
   };
   var onWatchCurrentPositionError = function(error){
@@ -48,6 +47,7 @@
     initialPosition.lng = position.coords.longitude;
     originLocation.lat = position.coords.latitude;
     originLocation.lng = position.coords.longitude;
+    setOrigin(position.coords.latitude, position.coords.longitude);
     $("#user_center").show();
     userMarker.setPosition(new google.maps.LatLng(initialPosition.lat,initialPosition.lng));
   };
